@@ -1,0 +1,3 @@
+[submodule "ext/fastde-cpp"]
+	path = ext/fastde-cpp
+	url = https://github.com/tcpan/fastde-cpp.git

@@ -10,7 +10,7 @@ ADDR_SANITIZER_LDFLAGS = #-lasan -fsanitize=address -fPIC
 # -mtune=native and -march=native should be defined in the user's ~/.R/Makevars
 PKG_NATIVE_FLAGS = -mtune=native -march=native
 
-PKG_CPPFLAGS = -I../ext/fastde/include/
+PKG_CPPFLAGS = -I../ext/fastde-cpp/include/
 # compile flags
 PKG_CXXFLAGS = $(ADDR_SANITIZER_CFLAGS) $(SHLIB_OPENMP_CXXFLAGS) -fno-omit-frame-pointer 
 PKG_CFLAGS = $(ADDR_SANITIZER_CFLAGS) $(SHLIB_OPENMP_CFLAGS) -fno-omit-frame-pointer 
