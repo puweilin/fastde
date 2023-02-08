@@ -16,7 +16,7 @@
 
 #include "utils_data.hpp"
 #include "fastde/benchmark_utils.hpp"
-
+#include "fastde/sparsemat.hpp"
 
 
 
@@ -1041,7 +1041,7 @@ extern cpp11::writable::list _sp_cbind(
 
 // csc
 template <typename XT, typename PT, typename IT>
-extern cpp11::r_vector<XT> _sp_colsums(
+extern cpp11::writable::r_vector<XT> _sp_colsums(
     cpp11::r_vector<XT> const & x, 
     cpp11::r_vector<PT> const & p, 
     IT const & ncol, 
@@ -1049,9 +1049,8 @@ extern cpp11::r_vector<XT> _sp_colsums(
 
     using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
 
-    cpp11::writable::r_vector<XT> out;
-    out.resize(ncol);
-
+    cpp11::writable::r_vector<XT> out(ncol);
+    
 #pragma omp parallel num_threads(threads)
 {   
     int tid = omp_get_thread_num();
@@ -1077,14 +1076,14 @@ extern cpp11::r_vector<XT> _sp_colsums(
 
 // csc
 template <typename XT, typename IT, typename IT2>
-extern cpp11::r_vector<XT> _sp_rowsums(
+extern cpp11::writable::r_vector<XT> _sp_rowsums(
     cpp11::r_vector<XT> const & x, 
     cpp11::r_vector<IT> const & i, 
     IT const & nrow, IT2 const & nzcount, 
     int const & threads) {
 
-    cpp11::writable::r_vector<XT> out;
-    out.resize(nrow);
+    cpp11::writable::r_vector<XT> out(nrow);
+    std::fill(out.begin(), out.end(), 0);
     
     if (threads == 1) {
 
@@ -1096,7 +1095,8 @@ extern cpp11::r_vector<XT> _sp_rowsums(
     } else {
 
         // alloc temp storage.
-        std::vector<std::vector<XT>> sums(threads);
+        std::vector<std::vector<XT>> sums;
+        sums.resize(threads);
 
 #pragma omp parallel num_threads(threads)
 {   
@@ -1107,7 +1107,7 @@ extern cpp11::r_vector<XT> _sp_rowsums(
         int nid = tid + 1;
         size_t end = nid * block + (nid > rem ? rem : nid);
 
-        sums[tid].resize(nrow);
+        sums[tid] = std::vector<XT>(nrow, 0);
         IT r;
 
         for (; offset < end; ++offset) {

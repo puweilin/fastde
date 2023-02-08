@@ -44,32 +44,32 @@ cpp11_sp64_to_dense_transposed <- function(x, i, p, nrow, ncol, threads) {
   .Call(`_fastde_cpp11_sp64_to_dense_transposed`, x, i, p, nrow, ncol, threads)
 }
 
-cpp11_sp_rbind <- function(xvecs, ivecs, pvecs, nrows, ncols, threads) {
-  .Call(`_fastde_cpp11_sp_rbind`, xvecs, ivecs, pvecs, nrows, ncols, threads)
+cpp11_sp_rbind <- function(xvecs, ivecs, pvecs, nrows, ncols, threads, method) {
+  .Call(`_fastde_cpp11_sp_rbind`, xvecs, ivecs, pvecs, nrows, ncols, threads, method)
 }
 
-cpp11_sp64_rbind <- function(xvecs, ivecs, pvecs, nrows, ncols, threads) {
-  .Call(`_fastde_cpp11_sp64_rbind`, xvecs, ivecs, pvecs, nrows, ncols, threads)
+cpp11_sp64_rbind <- function(xvecs, ivecs, pvecs, nrows, ncols, threads, method) {
+  .Call(`_fastde_cpp11_sp64_rbind`, xvecs, ivecs, pvecs, nrows, ncols, threads, method)
 }
 
-cpp11_sp_cbind <- function(xvecs, ivecs, pvecs, nrows, ncols, threads) {
-  .Call(`_fastde_cpp11_sp_cbind`, xvecs, ivecs, pvecs, nrows, ncols, threads)
+cpp11_sp_cbind <- function(xvecs, ivecs, pvecs, nrows, ncols, threads, method) {
+  .Call(`_fastde_cpp11_sp_cbind`, xvecs, ivecs, pvecs, nrows, ncols, threads, method)
 }
 
-cpp11_sp64_cbind <- function(xvecs, ivecs, pvecs, nrows, ncols, threads) {
-  .Call(`_fastde_cpp11_sp64_cbind`, xvecs, ivecs, pvecs, nrows, ncols, threads)
+cpp11_sp64_cbind <- function(xvecs, ivecs, pvecs, nrows, ncols, threads, method) {
+  .Call(`_fastde_cpp11_sp64_cbind`, xvecs, ivecs, pvecs, nrows, ncols, threads, method)
 }
 
-cpp11_sp_colSums <- function(x, p, threads) {
-  .Call(`_fastde_cpp11_sp_colSums`, x, p, threads)
+cpp11_sp_colSums <- function(x, p, threads, method) {
+  .Call(`_fastde_cpp11_sp_colSums`, x, p, threads, method)
 }
 
-cpp11_sp64_colSums <- function(x, p, threads) {
-  .Call(`_fastde_cpp11_sp64_colSums`, x, p, threads)
+cpp11_sp64_colSums <- function(x, p, threads, method) {
+  .Call(`_fastde_cpp11_sp64_colSums`, x, p, threads, method)
 }
 
-cpp11_sp_rowSums <- function(x, i, nrows, threads) {
-  .Call(`_fastde_cpp11_sp_rowSums`, x, i, nrows, threads)
+cpp11_sp_rowSums <- function(x, i, nrow, threads, method) {
+  .Call(`_fastde_cpp11_sp_rowSums`, x, i, nrow, threads, method)
 }
 
 cpp11_dense_ttest <- function(input, features, labels, alternative, var_equal, as_dataframe, threads) {

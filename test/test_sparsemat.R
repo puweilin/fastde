@@ -168,51 +168,115 @@ rm(cdM64)
 Ms  <- list(M, M, M)
 
 rMR <- rbind(M, M, M)
-cMR <- cbind(M, M, M)
-
-
 
 tic("R rbind")
 rMR <- rbind(M, M, M)
 toc()
 
-tic("fastde rbind")
-rM <- fastde::sp_rbind(Ms, 1)
+tic("fastde rbind iter")
+rM <- fastde::sp_rbind(Ms, 1, 0)
 toc()
+identical(rMR@x, rM@x)
+identical(rMR@i, rM@i)
+identical(rMR@p, rM@p)
 
+tic("fastde rbind vec")
+rM <- fastde::sp_rbind(Ms, 1, 1)
+toc()
 identical(rMR@x, rM@x)
 identical(rMR@i, rM@i)
 identical(rMR@p, rM@p)
 
 
-
-tic("fastde rbind 4t")
-rM4 <- fastde::sp_rbind(Ms, 4)
+tic("fastde rbind vec")
+rM <- fastde::sp_rbind(Ms, 1, 2)
 toc()
+identical(rMR@x, rM@x)
+identical(rMR@i, rM@i)
+identical(rMR@p, rM@p)
 
 
+tic("fastde rbind orig")
+rM <- fastde::sp_rbind(Ms, 1, 3)
+toc()
+identical(rMR@x, rM@x)
+identical(rMR@i, rM@i)
+identical(rMR@p, rM@p)
+
+
+tic("fastde rbind 4t iter ")
+rM4 <- fastde::sp_rbind(Ms, 4, 0)
+toc()
+identical(rMR@x, rM4@x)
+identical(rMR@i, rM4@i)
+identical(rMR@p, rM4@p)
+
+tic("fastde rbind 4t vec")
+rM4 <- fastde::sp_rbind(Ms, 4, 1)
+toc()
+identical(rMR@x, rM4@x)
+identical(rMR@i, rM4@i)
+identical(rMR@p, rM4@p)
+
+tic("fastde rbind 4t vec")
+rM4 <- fastde::sp_rbind(Ms, 4, 2)
+toc()
+identical(rMR@x, rM4@x)
+identical(rMR@i, rM4@i)
+identical(rMR@p, rM4@p)
+
+tic("fastde rbind 4t other")
+rM4 <- fastde::sp_rbind(Ms, 4, 9)
+toc()
 identical(rMR@x, rM4@x)
 identical(rMR@i, rM4@i)
 identical(rMR@p, rM4@p)
 
 
+cMR <- cbind(M, M, M)
 
 tic("R cbind")
 cMR <- cbind(M, M, M)
 toc()
 
-tic("fastde cbind")
-cM <- fastde::sp_cbind(Ms, 1)
+tic("fastde cbind iter")
+cM <- fastde::sp_cbind(Ms, 1, 0)
 toc()
-
 identical(cMR@x, cM@x)
 identical(cMR@i, cM@i)
 identical(cMR@p, cM@p)
 
-tic("fastde cbind 4t")
-cM4 <- fastde::sp_cbind(Ms, 4)
+tic("fastde cbind vec")
+cM <- fastde::sp_cbind(Ms, 1, 1)
 toc()
+identical(cMR@x, cM@x)
+identical(cMR@i, cM@i)
+identical(cMR@p, cM@p)
 
+tic("fastde cbind other")
+cM <- fastde::sp_cbind(Ms, 1, 9)
+toc()
+identical(cMR@x, cM@x)
+identical(cMR@i, cM@i)
+identical(cMR@p, cM@p)
+
+tic("fastde cbind 4t iter")
+cM4 <- fastde::sp_cbind(Ms, 4, 0)
+toc()
+identical(cMR@x, cM4@x)
+identical(cMR@i, cM4@i)
+identical(cMR@p, cM4@p)
+
+tic("fastde cbind 4t vec")
+cM4 <- fastde::sp_cbind(Ms, 4, 1)
+toc()
+identical(cMR@x, cM4@x)
+identical(cMR@i, cM4@i)
+identical(cMR@p, cM4@p)
+
+tic("fastde cbind 4t other ")
+cM4 <- fastde::sp_cbind(Ms, 4, 9)
+toc()
 identical(cMR@x, cM4@x)
 identical(cMR@i, cM4@i)
 identical(cMR@p, cM4@p)
@@ -220,34 +284,85 @@ identical(cMR@p, cM4@p)
 
 ############
 
+library(dplyr)
+
 tic("[TIME] R colsum")
 cs <- colSums(M, 1)
 toc()
 
-tic("[TIME] fastde colsum")
-fcs <- fastde::sp_colSums(M, 1)
+tic("[TIME] fastde colsum iter")
+fcs <- fastde::sp_colSums(M, 1, 0)
 toc()
-
-tic("[TIME] fastde colsum 4")
-fcs4 <- fastde::sp_colSums(M, 4)
-toc()
-
 identical(cs, fcs)
-identical(cs, fcs4)
+all(near(cs, fcs, tol = .Machine$double.eps^0.5))
 
+tic("[TIME] fastde colsum vec")
+fcs <- fastde::sp_colSums(M, 1, 1)
+toc()
+identical(cs, fcs)
+all(near(cs, fcs, tol = .Machine$double.eps^0.5))
+
+tic("[TIME] fastde colsum orig")
+fcs <- fastde::sp_colSums(M, 1, 2)
+toc()
+identical(cs, fcs)
+all(near(cs, fcs, tol = .Machine$double.eps^0.5))
+
+tic("[TIME] fastde colsum 4 iter")
+fcs4 <- fastde::sp_colSums(M, 4, 0)
+toc()
+identical(cs, fcs4)
+all(near(cs, fcs4, tol = .Machine$double.eps^0.5))
+
+tic("[TIME] fastde colsum 4 vec")
+fcs4 <- fastde::sp_colSums(M, 4, 1)
+toc()
+identical(cs, fcs4)
+all(near(cs, fcs4, tol = .Machine$double.eps^0.5))
+
+tic("[TIME] fastde colsum 4 orig")
+fcs4 <- fastde::sp_colSums(M, 4, 2)
+toc()
+identical(cs, fcs4)
+all(near(cs, fcs4, tol = .Machine$double.eps^0.5))
 
 
 tic("[TIME] R rowsum")
-cs <- colSums(M, 1)
+cs <- rowSums(M, 1)
 toc()
 
-tic("[TIME] fastde rowsum")
-fcs <- fastde::sp_colSums(M, 1)
+tic("[TIME] fastde rowsum iter")
+fcs <- fastde::sp_rowSums(M, 1, 0)
 toc()
-
-tic("[TIME] fastde rowsum 4")
-fcs4 <- fastde::sp_colSums(M, 4)
-toc()
-
 identical(cs, fcs)
+all(near(cs, fcs, tol = .Machine$double.eps^0.5))
+
+tic("[TIME] fastde rowsum vec")
+fcs <- fastde::sp_rowSums(M, 1, 1)
+toc()
+identical(cs, fcs)
+all(near(cs, fcs, tol = .Machine$double.eps^0.5))
+
+tic("[TIME] fastde rowsum orig")
+fcs <- fastde::sp_rowSums(M, 1, 2)
+toc()
+identical(cs, fcs)
+all(near(cs, fcs, tol = .Machine$double.eps^0.5))
+
+tic("[TIME] fastde rowsum 4 iter ")
+fcs4 <- fastde::sp_rowSums(M, 4, 0)
+toc()
 identical(cs, fcs4)
+all(near(cs, fcs4, tol = .Machine$double.eps^0.5))
+
+tic("[TIME] fastde rowsum 4 vec")
+fcs4 <- fastde::sp_rowSums(M, 4, 1)
+toc()
+identical(cs, fcs4)
+all(near(cs, fcs4, tol = .Machine$double.eps^0.5))
+
+tic("[TIME] fastde rowsum 4 orig")
+fcs4 <- fastde::sp_rowSums(M, 4, 2)
+toc()
+identical(cs, fcs4)
+all(near(cs, fcs4, tol = .Machine$double.eps^0.5))/home/tpan/src/bigsparser

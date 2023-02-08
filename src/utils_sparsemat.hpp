@@ -128,7 +128,7 @@ extern cpp11::writable::list _sp_cbind(
 
 // csc
 template <typename XT, typename PT, typename IT>
-extern cpp11::r_vector<XT> _sp_colsums(
+extern cpp11::writable::r_vector<XT> _sp_colsums(
     cpp11::r_vector<XT> const & x, 
     cpp11::r_vector<PT> const & p, 
     IT const & ncol, 
@@ -136,7 +136,7 @@ extern cpp11::r_vector<XT> _sp_colsums(
 
 // csc
 template <typename XT, typename IT, typename IT2>
-extern cpp11::r_vector<XT> _sp_rowsums(
+extern cpp11::writable::r_vector<XT> _sp_rowsums(
     cpp11::r_vector<XT> const & x, 
     cpp11::r_vector<IT> const & i, 
     IT const & nrow, IT2 const & nzcount, 

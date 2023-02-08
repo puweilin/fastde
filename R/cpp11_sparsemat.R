@@ -106,7 +106,7 @@ sp_to_dense_transposed <- function(spmat, threads = 1) {
 #' @return a dgCMatrix64 object with the combined content.
 #' @name sp_rbind
 #' @export
-sp_rbind <- function(spmats, threads = 1) {
+sp_rbind <- function(spmats, threads = 1, method = 1) {
 
     nmats = length(spmats)
 
@@ -129,18 +129,21 @@ sp_rbind <- function(spmats, threads = 1) {
         nms <- c(nms, rownames(spmats[[i]]))
     }
     toc()
-
+        
     tic("combine")
     # invoke the rbind
     if (is(spmats[[1]], 'dgCMatrix')) {
-        m <- cpp11_sp_rbind(xs, iss, ps, nrs, ncs, threads)
+        m <- cpp11_sp_rbind(xs, iss, ps, nrs, ncs, threads, method = method)
     } else if (is(spmats[[1]], 'dgCMatrix64')) {
-        m <- cpp11_sp64_rbind(xs, iss, ps, nrs, ncs, threads)
+        m <- cpp11_sp64_rbind(xs, iss, ps, nrs, ncs, threads, method = method)
     } else {
         print("UNSUPPORTED.  Matrices must be sparse matrices")
         return(NULL)
     }
     toc()
+
+    str(m[[3]])
+    str(m[[2]])
 
     tic("build output")
     if (length(m[[3]]) <= .Machine$integer.max) {
@@ -172,7 +175,7 @@ sp_rbind <- function(spmats, threads = 1) {
 #' @return a dgCMatrix64 object with the combined content.
 #' @name sp_cbind
 #' @export
-sp_cbind <- function(spmats, threads = 1) {
+sp_cbind <- function(spmats, threads = 1, method = 1) {
 
     nmats = length(spmats)
 
@@ -199,14 +202,17 @@ sp_cbind <- function(spmats, threads = 1) {
     tic("combine")
     # invoke the rbind
     if (is(spmats[[1]], 'dgCMatrix')) {
-        m <- cpp11_sp_cbind(xs, iss, ps, nrs, ncs, threads)
+        m <- cpp11_sp_cbind(xs, iss, ps, nrs, ncs, threads, method = method)
     } else if (is(spmats[[1]], 'dgCMatrix64')) {
-        m <- cpp11_sp64_cbind(xs, iss, ps, nrs, ncs, threads)
+        m <- cpp11_sp64_cbind(xs, iss, ps, nrs, ncs, threads, method = method)
     } else {
         print("UNSUPPORTED.  Matrices must be sparse matrices")
         return(NULL)
     }
     toc()
+
+    # print(length(m[[1]]))
+    # print(m[[3]][[m[[5]]]])
 
     tic("create output")
     if (length(m[[3]]) <= .Machine$integer.max) {
@@ -238,16 +244,16 @@ sp_cbind <- function(spmats, threads = 1) {
 #' @return a dense array of row sums.
 #' @name sp_rowSums
 #' @export
-sp_rowSums <- function(spmat, threads = 1) {
+sp_rowSums <- function(spmat, threads = 1, method = 1) {
     tic("[TIME] Row sums")
     if (is(spmat, 'dgCMatrix')) {
-        if (threads == 1) {
-            m <- rowSums(spmat)
-        } else {
-            m <- cpp11_sp_rowSums(spmat@x, spmat@i, spmat@Dim[[2]], threads)
-        }
+        # if (threads == 1) {
+        #     m <- rowSums(spmat)
+        # } else {
+            m <- cpp11_sp_rowSums(spmat@x, spmat@i, spmat@Dim[[1]], threads, method = method)
+        # }
     } else if (is(spmat, 'dgCMatrix64')) {
-        m <- cpp11_sp_rowSums(spmat@x, spmat@i, spmat@Dim[[2]], threads)
+        m <- cpp11_sp_rowSums(spmat@x, spmat@i, spmat@Dim[[1]], threads, method = method)
     } else {
         print("UNSUPPORTED.  Matrices must be sparse matrices")
         return(NULL)
@@ -266,16 +272,16 @@ sp_rowSums <- function(spmat, threads = 1) {
 #' @return a dense array of row sums.
 #' @name sp_rowSums
 #' @export
-sp_colSums <- function(spmat, threads = 1) {
-    tic("[TIME] Row sums")
+sp_colSums <- function(spmat, threads = 1, method = 1) {
+    tic("[TIME] Col sums")
     if (is(spmat, 'dgCMatrix')) {
-        if (threads == 1) {
-            m <- colSums(spmat)
-        } else {
-            m <- cpp11_sp_colSums(spmat@x, spmat@p, threads)
-        }
+        # if (threads == 1) {
+        #     m <- colSums(spmat)
+        # } else {
+            m <- cpp11_sp_colSums(spmat@x, spmat@p, threads, method = method)
+        # }
     } else if (is(spmat, 'dgCMatrix64')) {
-        m <- cpp11_sp64_colSums(spmat@x, spmat@p, threads)
+        m <- cpp11_sp64_colSums(spmat@x, spmat@p, threads, method = method)
     } else {
         print("UNSUPPORTED.  Matrices must be sparse matrices")
         return(NULL)
