@@ -20,6 +20,14 @@ cpp11_FilterFoldChangeMat <- function(fc, pct1, pct2, init_mask, min_pct, min_di
   .Call(`_fastde_cpp11_FilterFoldChangeMat`, fc, pct1, pct2, init_mask, min_pct, min_diff_pct, logfc_threshold, only_pos, not_count, threads)
 }
 
+cpp11_sp_normalize <- function(x, i, p, nrow, ncol, scale_factor, method, threads) {
+  .Call(`_fastde_cpp11_sp_normalize`, x, i, p, nrow, ncol, scale_factor, method, threads)
+}
+
+cpp11_sp64_normalize <- function(x, i, p, nrow, ncol, scale_factor, method, threads) {
+  .Call(`_fastde_cpp11_sp64_normalize`, x, i, p, nrow, ncol, scale_factor, method, threads)
+}
+
 cpp11_sp_transpose <- function(x, i, p, nrow, ncol, threads) {
   .Call(`_fastde_cpp11_sp_transpose`, x, i, p, nrow, ncol, threads)
 }
