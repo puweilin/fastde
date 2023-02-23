@@ -31,6 +31,10 @@ template void csc_clr_cols_vec(cpp11::doubles const & x, cpp11::integers const &
 
 template void csc_clr_cols_vec(cpp11::doubles const & x, cpp11::integers const & i, cpp11::doubles const & p, size_t const & rows, size_t const & cols, cpp11::writable::doubles & out, int const & threads);
 
+template void csc_clr_rows_vec(cpp11::doubles const & x, cpp11::integers const & i, cpp11::integers const & p, size_t const & rows, size_t const & cols, cpp11::writable::doubles & out, int const & threads);
+
+template void csc_clr_rows_vec(cpp11::doubles const & x, cpp11::integers const & i, cpp11::doubles const & p, size_t const & rows, size_t const & cols, cpp11::writable::doubles & out, int const & threads);
+
 
 template void csc_relative_count_vec(cpp11::doubles const & x, cpp11::integers const & p, size_t const & cols, double const & scale_factor, cpp11::writable::doubles & out, int const & threads);
 

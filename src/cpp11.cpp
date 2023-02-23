@@ -41,17 +41,17 @@ extern "C" SEXP _fastde_cpp11_FilterFoldChangeMat(SEXP fc, SEXP pct1, SEXP pct2,
   END_CPP11
 }
 // cpp11_normalize.cpp
-extern cpp11::writable::list cpp11_sp_normalize(cpp11::doubles const & x, cpp11::integers const & i, cpp11::integers const & p, int const & nrow, int const & ncol, double const & scale_factor, int const & method, int const & threads);
-extern "C" SEXP _fastde_cpp11_sp_normalize(SEXP x, SEXP i, SEXP p, SEXP nrow, SEXP ncol, SEXP scale_factor, SEXP method, SEXP threads) {
+extern cpp11::writable::doubles cpp11_sp_normalize(cpp11::doubles const & x, cpp11::integers const & i, cpp11::integers const & p, int const & nrow, int const & ncol, double const & scale_factor, int const & margin, int const & method, int const & threads);
+extern "C" SEXP _fastde_cpp11_sp_normalize(SEXP x, SEXP i, SEXP p, SEXP nrow, SEXP ncol, SEXP scale_factor, SEXP margin, SEXP method, SEXP threads) {
   BEGIN_CPP11
-    return cpp11::as_sexp(cpp11_sp_normalize(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(i), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(p), cpp11::as_cpp<cpp11::decay_t<int const &>>(nrow), cpp11::as_cpp<cpp11::decay_t<int const &>>(ncol), cpp11::as_cpp<cpp11::decay_t<double const &>>(scale_factor), cpp11::as_cpp<cpp11::decay_t<int const &>>(method), cpp11::as_cpp<cpp11::decay_t<int const &>>(threads)));
+    return cpp11::as_sexp(cpp11_sp_normalize(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(i), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(p), cpp11::as_cpp<cpp11::decay_t<int const &>>(nrow), cpp11::as_cpp<cpp11::decay_t<int const &>>(ncol), cpp11::as_cpp<cpp11::decay_t<double const &>>(scale_factor), cpp11::as_cpp<cpp11::decay_t<int const &>>(margin), cpp11::as_cpp<cpp11::decay_t<int const &>>(method), cpp11::as_cpp<cpp11::decay_t<int const &>>(threads)));
   END_CPP11
 }
 // cpp11_normalize.cpp
-extern cpp11::writable::list cpp11_sp64_normalize(cpp11::doubles const & x, cpp11::integers const & i, cpp11::doubles const & p, int const & nrow, int const & ncol, double const & scale_factor, int const & method, int const & threads);
-extern "C" SEXP _fastde_cpp11_sp64_normalize(SEXP x, SEXP i, SEXP p, SEXP nrow, SEXP ncol, SEXP scale_factor, SEXP method, SEXP threads) {
+extern cpp11::writable::doubles cpp11_sp64_normalize(cpp11::doubles const & x, cpp11::integers const & i, cpp11::doubles const & p, int const & nrow, int const & ncol, double const & scale_factor, int const & margin, int const & method, int const & threads);
+extern "C" SEXP _fastde_cpp11_sp64_normalize(SEXP x, SEXP i, SEXP p, SEXP nrow, SEXP ncol, SEXP scale_factor, SEXP margin, SEXP method, SEXP threads) {
   BEGIN_CPP11
-    return cpp11::as_sexp(cpp11_sp64_normalize(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(i), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(p), cpp11::as_cpp<cpp11::decay_t<int const &>>(nrow), cpp11::as_cpp<cpp11::decay_t<int const &>>(ncol), cpp11::as_cpp<cpp11::decay_t<double const &>>(scale_factor), cpp11::as_cpp<cpp11::decay_t<int const &>>(method), cpp11::as_cpp<cpp11::decay_t<int const &>>(threads)));
+    return cpp11::as_sexp(cpp11_sp64_normalize(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(i), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(p), cpp11::as_cpp<cpp11::decay_t<int const &>>(nrow), cpp11::as_cpp<cpp11::decay_t<int const &>>(ncol), cpp11::as_cpp<cpp11::decay_t<double const &>>(scale_factor), cpp11::as_cpp<cpp11::decay_t<int const &>>(margin), cpp11::as_cpp<cpp11::decay_t<int const &>>(method), cpp11::as_cpp<cpp11::decay_t<int const &>>(threads)));
   END_CPP11
 }
 // cpp11_sparsemat.cpp
@@ -199,14 +199,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_fastde_cpp11_dense_wmw",                 (DL_FUNC) &_fastde_cpp11_dense_wmw,                  7},
     {"_fastde_cpp11_sp64_cbind",                (DL_FUNC) &_fastde_cpp11_sp64_cbind,                 7},
     {"_fastde_cpp11_sp64_colSums",              (DL_FUNC) &_fastde_cpp11_sp64_colSums,               4},
-    {"_fastde_cpp11_sp64_normalize",            (DL_FUNC) &_fastde_cpp11_sp64_normalize,             8},
+    {"_fastde_cpp11_sp64_normalize",            (DL_FUNC) &_fastde_cpp11_sp64_normalize,             9},
     {"_fastde_cpp11_sp64_rbind",                (DL_FUNC) &_fastde_cpp11_sp64_rbind,                 7},
     {"_fastde_cpp11_sp64_to_dense",             (DL_FUNC) &_fastde_cpp11_sp64_to_dense,              6},
     {"_fastde_cpp11_sp64_to_dense_transposed",  (DL_FUNC) &_fastde_cpp11_sp64_to_dense_transposed,   6},
     {"_fastde_cpp11_sp64_transpose",            (DL_FUNC) &_fastde_cpp11_sp64_transpose,             6},
     {"_fastde_cpp11_sp_cbind",                  (DL_FUNC) &_fastde_cpp11_sp_cbind,                   7},
     {"_fastde_cpp11_sp_colSums",                (DL_FUNC) &_fastde_cpp11_sp_colSums,                 4},
-    {"_fastde_cpp11_sp_normalize",              (DL_FUNC) &_fastde_cpp11_sp_normalize,               8},
+    {"_fastde_cpp11_sp_normalize",              (DL_FUNC) &_fastde_cpp11_sp_normalize,               9},
     {"_fastde_cpp11_sp_rbind",                  (DL_FUNC) &_fastde_cpp11_sp_rbind,                   7},
     {"_fastde_cpp11_sp_rowSums",                (DL_FUNC) &_fastde_cpp11_sp_rowSums,                 5},
     {"_fastde_cpp11_sp_to_dense",               (DL_FUNC) &_fastde_cpp11_sp_to_dense,                6},
