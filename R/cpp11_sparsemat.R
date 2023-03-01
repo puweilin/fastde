@@ -146,12 +146,8 @@ sp_rbind <- function(spmats, threads = 1, method = 1) {
     str(m[[2]])
 
     tic("build output")
-    if (length(m[[3]]) <= .Machine$integer.max) {
-        ip <- integer(length=length(m[[3]]))
-        for (ii in 1:length(m[[3]])) {
-            ip[[ii]] <- m[[3]][[ii]]
-        }
-        out <- new('dgCMatrix', x = m[[1]], i = m[[2]], p = ip, 
+    if (is.integer(m[[3]])) {
+        out <- new('dgCMatrix', x = m[[1]], i = m[[2]], p = m[[3]], 
             Dim = c(m[[4]], m[[5]]))
     } else {
         out <- new('dgCMatrix64', x = m[[1]], i = m[[2]], p = m[[3]], 
@@ -215,12 +211,8 @@ sp_cbind <- function(spmats, threads = 1, method = 1) {
     # print(m[[3]][[m[[5]]]])
 
     tic("create output")
-    if (length(m[[3]]) <= .Machine$integer.max) {
-        ip <- integer(length=length(m[[3]]))
-        for (ii in 1:length(m[[3]])) {
-            ip[[ii]] <- m[[3]][[ii]]
-        }
-        out <- new('dgCMatrix', x = m[[1]], i = m[[2]], p = ip, 
+    if (is.integer(m[[3]])) {
+        out <- new('dgCMatrix', x = m[[1]], i = m[[2]], p = m[[3]], 
             Dim = c(m[[4]], m[[5]]))
     } else {
         out <- new('dgCMatrix64', x = m[[1]], i = m[[2]], p = m[[3]], 
