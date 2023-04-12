@@ -96,10 +96,22 @@ cpp11_dense_wmw <- function(input, features, labels, rtype, continuity_correctio
   .Call(`_fastde_cpp11_dense_wmw`, input, features, labels, rtype, continuity_correction, as_dataframe, threads)
 }
 
+cpp11_dense_wmw_vec <- function(input, features, labels, rtype, continuity_correction, as_dataframe, threads) {
+  .Call(`_fastde_cpp11_dense_wmw_vec`, input, features, labels, rtype, continuity_correction, as_dataframe, threads)
+}
+
 cpp11_sparse_wmw <- function(x, i, p, features, rows, cols, labels, features_as_rows, rtype, continuity_correction, as_dataframe, threads) {
   .Call(`_fastde_cpp11_sparse_wmw`, x, i, p, features, rows, cols, labels, features_as_rows, rtype, continuity_correction, as_dataframe, threads)
 }
 
 cpp11_sparse64_wmw <- function(x, i, p, features, rows, cols, labels, features_as_rows, rtype, continuity_correction, as_dataframe, threads) {
   .Call(`_fastde_cpp11_sparse64_wmw`, x, i, p, features, rows, cols, labels, features_as_rows, rtype, continuity_correction, as_dataframe, threads)
+}
+
+cpp11_sparse_wmw_vec <- function(x, i, p, features, rows, cols, labels, features_as_rows, rtype, continuity_correction, as_dataframe, threads) {
+  .Call(`_fastde_cpp11_sparse_wmw_vec`, x, i, p, features, rows, cols, labels, features_as_rows, rtype, continuity_correction, as_dataframe, threads)
+}
+
+cpp11_sparse64_wmw_vec <- function(x, i, p, features, rows, cols, labels, features_as_rows, rtype, continuity_correction, as_dataframe, threads) {
+  .Call(`_fastde_cpp11_sparse64_wmw_vec`, x, i, p, features, rows, cols, labels, features_as_rows, rtype, continuity_correction, as_dataframe, threads)
 }

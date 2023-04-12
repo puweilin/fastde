@@ -174,6 +174,13 @@ extern "C" SEXP _fastde_cpp11_dense_wmw(SEXP input, SEXP features, SEXP labels, 
   END_CPP11
 }
 // cpp11_wmwtest.cpp
+extern cpp11::sexp cpp11_dense_wmw_vec(cpp11::doubles_matrix<cpp11::by_column> const & input, cpp11::strings const & features, cpp11::integers const & labels, int rtype, bool continuity_correction, bool as_dataframe, int threads);
+extern "C" SEXP _fastde_cpp11_dense_wmw_vec(SEXP input, SEXP features, SEXP labels, SEXP rtype, SEXP continuity_correction, SEXP as_dataframe, SEXP threads) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(cpp11_dense_wmw_vec(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix<cpp11::by_column> const &>>(input), cpp11::as_cpp<cpp11::decay_t<cpp11::strings const &>>(features), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(labels), cpp11::as_cpp<cpp11::decay_t<int>>(rtype), cpp11::as_cpp<cpp11::decay_t<bool>>(continuity_correction), cpp11::as_cpp<cpp11::decay_t<bool>>(as_dataframe), cpp11::as_cpp<cpp11::decay_t<int>>(threads)));
+  END_CPP11
+}
+// cpp11_wmwtest.cpp
 extern cpp11::sexp cpp11_sparse_wmw(cpp11::doubles const & x, cpp11::integers const & i, cpp11::integers const & p, cpp11::strings const & features, int const & rows, int const & cols, cpp11::integers const & labels, bool features_as_rows, int rtype, bool continuity_correction, bool as_dataframe, int threads);
 extern "C" SEXP _fastde_cpp11_sparse_wmw(SEXP x, SEXP i, SEXP p, SEXP features, SEXP rows, SEXP cols, SEXP labels, SEXP features_as_rows, SEXP rtype, SEXP continuity_correction, SEXP as_dataframe, SEXP threads) {
   BEGIN_CPP11
@@ -187,6 +194,20 @@ extern "C" SEXP _fastde_cpp11_sparse64_wmw(SEXP x, SEXP i, SEXP p, SEXP features
     return cpp11::as_sexp(cpp11_sparse64_wmw(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(i), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(p), cpp11::as_cpp<cpp11::decay_t<cpp11::strings const &>>(features), cpp11::as_cpp<cpp11::decay_t<int const &>>(rows), cpp11::as_cpp<cpp11::decay_t<int const &>>(cols), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(labels), cpp11::as_cpp<cpp11::decay_t<bool>>(features_as_rows), cpp11::as_cpp<cpp11::decay_t<int>>(rtype), cpp11::as_cpp<cpp11::decay_t<bool>>(continuity_correction), cpp11::as_cpp<cpp11::decay_t<bool>>(as_dataframe), cpp11::as_cpp<cpp11::decay_t<int>>(threads)));
   END_CPP11
 }
+// cpp11_wmwtest.cpp
+extern cpp11::sexp cpp11_sparse_wmw_vec(cpp11::doubles const & x, cpp11::integers const & i, cpp11::integers const & p, cpp11::strings const & features, int const & rows, int const & cols, cpp11::integers const & labels, bool features_as_rows, int rtype, bool continuity_correction, bool as_dataframe, int threads);
+extern "C" SEXP _fastde_cpp11_sparse_wmw_vec(SEXP x, SEXP i, SEXP p, SEXP features, SEXP rows, SEXP cols, SEXP labels, SEXP features_as_rows, SEXP rtype, SEXP continuity_correction, SEXP as_dataframe, SEXP threads) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(cpp11_sparse_wmw_vec(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(i), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(p), cpp11::as_cpp<cpp11::decay_t<cpp11::strings const &>>(features), cpp11::as_cpp<cpp11::decay_t<int const &>>(rows), cpp11::as_cpp<cpp11::decay_t<int const &>>(cols), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(labels), cpp11::as_cpp<cpp11::decay_t<bool>>(features_as_rows), cpp11::as_cpp<cpp11::decay_t<int>>(rtype), cpp11::as_cpp<cpp11::decay_t<bool>>(continuity_correction), cpp11::as_cpp<cpp11::decay_t<bool>>(as_dataframe), cpp11::as_cpp<cpp11::decay_t<int>>(threads)));
+  END_CPP11
+}
+// cpp11_wmwtest.cpp
+extern cpp11::sexp cpp11_sparse64_wmw_vec(cpp11::doubles const & x, cpp11::integers const & i, cpp11::doubles const & p, cpp11::strings const & features, int const & rows, int const & cols, cpp11::integers const & labels, bool features_as_rows, int rtype, bool continuity_correction, bool as_dataframe, int threads);
+extern "C" SEXP _fastde_cpp11_sparse64_wmw_vec(SEXP x, SEXP i, SEXP p, SEXP features, SEXP rows, SEXP cols, SEXP labels, SEXP features_as_rows, SEXP rtype, SEXP continuity_correction, SEXP as_dataframe, SEXP threads) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(cpp11_sparse64_wmw_vec(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(x), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(i), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles const &>>(p), cpp11::as_cpp<cpp11::decay_t<cpp11::strings const &>>(features), cpp11::as_cpp<cpp11::decay_t<int const &>>(rows), cpp11::as_cpp<cpp11::decay_t<int const &>>(cols), cpp11::as_cpp<cpp11::decay_t<cpp11::integers const &>>(labels), cpp11::as_cpp<cpp11::decay_t<bool>>(features_as_rows), cpp11::as_cpp<cpp11::decay_t<int>>(rtype), cpp11::as_cpp<cpp11::decay_t<bool>>(continuity_correction), cpp11::as_cpp<cpp11::decay_t<bool>>(as_dataframe), cpp11::as_cpp<cpp11::decay_t<int>>(threads)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
@@ -197,6 +218,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_fastde_cpp11_FilterFoldChangeMat",       (DL_FUNC) &_fastde_cpp11_FilterFoldChangeMat,       10},
     {"_fastde_cpp11_dense_ttest",               (DL_FUNC) &_fastde_cpp11_dense_ttest,                7},
     {"_fastde_cpp11_dense_wmw",                 (DL_FUNC) &_fastde_cpp11_dense_wmw,                  7},
+    {"_fastde_cpp11_dense_wmw_vec",             (DL_FUNC) &_fastde_cpp11_dense_wmw_vec,              7},
     {"_fastde_cpp11_sp64_cbind",                (DL_FUNC) &_fastde_cpp11_sp64_cbind,                 7},
     {"_fastde_cpp11_sp64_colSums",              (DL_FUNC) &_fastde_cpp11_sp64_colSums,               4},
     {"_fastde_cpp11_sp64_normalize",            (DL_FUNC) &_fastde_cpp11_sp64_normalize,             9},
@@ -214,8 +236,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_fastde_cpp11_sp_transpose",              (DL_FUNC) &_fastde_cpp11_sp_transpose,               6},
     {"_fastde_cpp11_sparse64_ttest",            (DL_FUNC) &_fastde_cpp11_sparse64_ttest,            12},
     {"_fastde_cpp11_sparse64_wmw",              (DL_FUNC) &_fastde_cpp11_sparse64_wmw,              12},
+    {"_fastde_cpp11_sparse64_wmw_vec",          (DL_FUNC) &_fastde_cpp11_sparse64_wmw_vec,          12},
     {"_fastde_cpp11_sparse_ttest",              (DL_FUNC) &_fastde_cpp11_sparse_ttest,              12},
     {"_fastde_cpp11_sparse_wmw",                (DL_FUNC) &_fastde_cpp11_sparse_wmw,                12},
+    {"_fastde_cpp11_sparse_wmw_vec",            (DL_FUNC) &_fastde_cpp11_sparse_wmw_vec,            12},
     {NULL, NULL, 0}
 };
 }

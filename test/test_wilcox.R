@@ -99,6 +99,96 @@ toc()
 # print(fastdewilcox2_df)
 
 
+tic("fastde4")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox4 <- fastde::wmw_fast(input, labels, rtype=as.integer(2), 
+    continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
+toc()
+
+tic("fastde stat4")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox_stat4 <- fastde::wmw_fast(input, labels, rtype=as.integer(3), 
+    continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
+toc()
+
+tic("fastde stat4")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox_z4 <- fastde::wmw_fast(input, labels, rtype=as.integer(4), 
+    continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
+toc()
+
+tic("fastde_df4")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox_df4 <- fastde::wmw_fast(input, labels, rtype=as.integer(2), 
+    continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
+toc()
+
+
+
+tic("fastdev")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcoxv <- fastde::wmw_fastv(input, labels, rtype=as.integer(2), 
+    continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
+toc()
+
+tic("fastde statv")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox_statv <- fastde::wmw_fastv(input, labels, rtype=as.integer(3), 
+    continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
+toc()
+
+tic("fastde statv")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox_zv <- fastde::wmw_fastv(input, labels, rtype=as.integer(4), 
+    continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
+toc()
+
+tic("fastde_dfv")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox_dfv <- fastde::wmw_fastv(input, labels, rtype=as.integer(2), 
+    continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
+toc()
+
+# print(fastdewilcox2_df)
+
+
+tic("fastde4v")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox4v <- fastde::wmw_fastv(input, labels, rtype=as.integer(2), 
+    continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
+toc()
+
+tic("fastde stat4v")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox_stat4v <- fastde::wmw_fastv(input, labels, rtype=as.integer(3), 
+    continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
+toc()
+
+tic("fastde stat4v")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox_z4v <- fastde::wmw_fastv(input, labels, rtype=as.integer(4), 
+    continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
+toc()
+
+tic("fastde_df4v")
+# time and run BioQC
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+fastdewilcox_df4v <- fastde::wmw_fastv(input, labels, rtype=as.integer(2), 
+    continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
+toc()
+
+
 
 # tic("BioQC2")
 # # time and run BioQC
@@ -242,7 +332,10 @@ toc()
 
 # comparemat("c++ vs R wilcox", wilcox, Rwilcox)
 # comparemat("c++ vs fastde wilcox", wilcox, fastdewilcox)
-comparemat("R vs fastde wilcox2", Rwilcox, fastdewilcox)
+comparemat("R vs fastde wilcox", Rwilcox, fastdewilcox)
+comparemat("R vs fastde wilcox4", Rwilcox, fastdewilcox4)
+comparemat("R vs fastde wilcoxv", Rwilcox, fastdewilcoxv)
+comparemat("R vs fastde wilcox4v", Rwilcox, fastdewilcox4v)
 # comparemat("c++ vs BioQC wilcox", Rwilcox, BioQCwilcox2)
 # comparemat("R vs Limma wilcox", Rwilcox, Limmawilcox)
 
@@ -253,6 +346,9 @@ comparemat("R vs fastde wilcox2", Rwilcox, fastdewilcox)
 # comparemat("c++ vs R wilcox", wilcox, Rwilcox)
 # comparemat("c++ vs fastde wilcox", wilcox, fastdewilcox)
 comparemat("R vs fastde wilcox stat", Rwilcox_stat, fastdewilcox_stat)
+comparemat("R vs fastde wilcox stat4", Rwilcox_stat, fastdewilcox_stat4)
+comparemat("R vs fastde wilcox statv", Rwilcox_stat, fastdewilcox_statv)
+comparemat("R vs fastde wilcox stat4v", Rwilcox_stat, fastdewilcox_stat4v)
 
 # head(Rwilcox_z[, 11:20])
 # head(fastdewilcox_z[ , 11:20])
@@ -260,6 +356,9 @@ comparemat("R vs fastde wilcox stat", Rwilcox_stat, fastdewilcox_stat)
 # comparemat("c++ vs R wilcox", wilcox, Rwilcox)
 # comparemat("c++ vs fastde wilcox", wilcox, fastdewilcox)
 comparemat("R vs fastde wilcox z", Rwilcox_z, fastdewilcox_z)
+comparemat("R vs fastde wilcox z4", Rwilcox_z, fastdewilcox_z4)
+comparemat("R vs fastde wilcox zv", Rwilcox_z, fastdewilcox_zv)
+comparemat("R vs fastde wilcox z4v", Rwilcox_z, fastdewilcox_z4v)
 
 # pos <- which((Rwilcox_z[1, ] - fastdewilcox_z[1, ]) != 0)
 # Rwilcox_z[1, pos[1:10]]

@@ -19,4 +19,8 @@ template void count_clusters(cpp11::r_vector<int>::const_iterator labels, size_t
     std::vector<std::pair<int, size_t> > & clust_counts, int const & threads);
 
 
+template void count_clusters_vec(cpp11::integers const & labels, size_t const & count, 
+    std::vector<std::pair<int, size_t> > & clust_counts, int const & threads);
+
+
 template void get_unique_clusters(std::vector<int> const & labels, std::vector<int> & unique_sorted);
