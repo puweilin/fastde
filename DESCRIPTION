@@ -13,7 +13,8 @@ Imports:
         Matrix,
         rhdf5,
         future,
-        methods
+        methods, cpp11
+Remotes: tcpan/cpp11
 LinkingTo: cpp11
 RoxygenNote: 7.2.1
 Encoding: UTF-8

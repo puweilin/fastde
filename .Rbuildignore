@@ -1,0 +1,12 @@
+.git
+.gitignore
+.gitmodules
+WIP
+.Rhistory
+test/demo
+src/*.o
+ext/fastde-cpp/ext
+ext/fastde-cpp/benchmarks
+ext/fastde-cpp/tests
+.vscode
+
