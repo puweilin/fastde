@@ -1,4 +1,3 @@
-library(BioQC)
 library(rhdf5)
 library(fastde)
 library(tictoc)
@@ -133,7 +132,6 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde")
-# time and run BioQC
 
 fastdewilcox <- fastde::wmw_fast(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
@@ -142,7 +140,6 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde_df")
-# time and run BioQC
 fastdewilcox_df <- fastde::wmw_fast(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
@@ -151,7 +148,6 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde 4")
-# time and run BioQC
 fastdewilcox4 <- fastde::wmw_fast(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
@@ -159,7 +155,6 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde_df 4")
-# time and run BioQC
 fastdewilcox_df4 <- fastde::wmw_fast(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
@@ -167,7 +162,6 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastdev")
-# time and run BioQC
 fastdewilcoxv <- fastde::wmw_fastv(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
@@ -175,7 +169,6 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde_dfv")
-# time and run BioQC
 fastdewilcox_dfv <- fastde::wmw_fastv(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
@@ -184,7 +177,6 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde 4v")
-# time and run BioQC
 fastdewilcox4v <- fastde::wmw_fastv(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
@@ -192,7 +184,6 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde_df 4v")
-# time and run BioQC
 fastdewilcox_df4v <- fastde::wmw_fastv(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
@@ -206,70 +197,16 @@ toc()
 
 
 
-# tic("BioQC2")
-# # time and run BioQC
-# BioQCwilcox2 <- matrix(, ncol = ncols, nrow = length(L) )
-# inds = list()
-# for ( c in L ) {
-#     inds[[c]] <- labels %in% c
-# }
-# # cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-# BioQCwilcox2 <- BioQC::wmwTest(as.matrix(input), inds, valType = "p.two.sided")
-# toc()
 
 
-
-# tic("BioQC3")
-# # time and run BioQC
-# BioQCwilcox3 <- matrix(, ncol = ncols, nrow = length(L) )
-# inds = list()
-# for ( c in L ) {
-#     inds[[c]] <- labels %in% c
-#     cat(sprintf("label %d:  %d\n", c, length(which(inds[[c]]))))
-# }
-# cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-# for ( gene in 1:ncol(input) ) {
-#     x <- matrix(as.vector(input[, gene]), ncol=1)
-    
-#     BioQCwilcox3[, gene] <- BioQC::wmwTest(x, inds, valType = "p.two.sided")
-# }
-# toc()
-
-
-
-
-
-# tic("BioQC")
-# # time and run BioQC
-# BioQCwilcox <- matrix(, ncol = ncols, nrow = length(L) )
-# for ( gene in 1:ncol(input) ) {
-#     x <- matrix(as.vector(input[, gene]), ncol=1)
-#     # cat(sprintf("gene %d \n", gene))
-#     # cat(sprintf("x size:  r %d X c %d.\n", nrow(x), ncol(x)))
-    
-#     i <- 1
-#     for ( c in L ) {
-#         ind <- which(labels %in% c)
-        
-#         v <- BioQC::wmwTest(x, ind, valType = "p.two.sided")
-#         # cat(sprintf("bioQC %f\n", v))
-#         BioQCwilcox[i, gene] <- v
-#         i <- i + 1
-#     }
-# }
-# toc()
-
-# BioQCwilcox
 
 
 
 # fastdewilcox[, 1]
-# BioQCwilcox2[, 1]
 # Limmawilcox[, 1]
 # Rwilcox[, 1]
 
 # fastdewilcox[1, ]
-# BioQCwilcox2[1, ]
 # Limmawilcox[1, ]
 # Rwilcox[1, ]
 
@@ -298,7 +235,6 @@ toc()
 
 # compare by calculating the residuals.
 comparemat("R vs fastde", Rwilcox, fastdewilcox)
-# comparemat("bioqc vs fastde", BioQCwilcox2, fastdewilcox)
 # comparemat("limma vs fastde", Limmawilcox, fastdewilcox)
 
 comparemat("R vs fastde", Rwilcox, fastdewilcoxv)
@@ -313,7 +249,6 @@ comparemat("R vs fastde", Rwilcox, fastdewilcox4v)
 
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde sparse")
-# time and run BioQC
 fastdewilcox <- fastde::sparse_wmw_fast(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
@@ -321,14 +256,12 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde_df sparse")
-# time and run BioQC
 fastdewilcox_df <- fastde::sparse_wmw_fast(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde sparse 4")
-# time and run BioQC
 fastdewilcox4 <- fastde::sparse_wmw_fast(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
@@ -336,14 +269,12 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde_df sparse 4")
-# time and run BioQC
 fastdewilcox_df4 <- fastde::sparse_wmw_fast(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
 
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde sparsev")
-# time and run BioQC
 fastdewilcoxv <- fastde::sparse_wmw_fastv(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
@@ -351,14 +282,12 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde_df sparsev")
-# time and run BioQC
 fastdewilcox_dfv <- fastde::sparse_wmw_fastv(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde sparse 4v")
-# time and run BioQC
 fastdewilcox4v <- fastde::sparse_wmw_fastv(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
@@ -366,7 +295,6 @@ toc()
 
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde_df sparse 4v")
-# time and run BioQC
 fastdewilcox_df4v <- fastde::sparse_wmw_fastv(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
@@ -376,7 +304,6 @@ toc()
 
 ## compare by calculating the residuals.
 comparemat("R vs sparse fastde", Rwilcox, fastdewilcox)
-# comparemat("bioqc vs sparse fastde", BioQCwilcox2, fastdewilcox)
 # comparemat("limma vs sparse fastde", Limmawilcox, fastdewilcox)
 
 comparemat("R vs sparse fastde", Rwilcox, fastdewilcox4)
@@ -389,7 +316,6 @@ input64 <- as.dgCMatrix64(input)
 
 cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde sparse64")
-# time and run BioQC
 fastdewilcox64 <- fastde::sparse_wmw_fast(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
@@ -397,14 +323,12 @@ toc()
 
 cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde_df sparse64")
-# time and run BioQC
 fastdewilcox_df64 <- fastde::sparse_wmw_fast(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
 cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde sparse644")
-# time and run BioQC
 fastdewilcox644 <- fastde::sparse_wmw_fast(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
@@ -412,14 +336,12 @@ toc()
 
 cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde_df sparse644")
-# time and run BioQC
 fastdewilcox_df644 <- fastde::sparse_wmw_fast(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
 
 cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde sparse64v")
-# time and run BioQC
 fastdewilcox64v <- fastde::sparse_wmw_fastv(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
@@ -427,14 +349,12 @@ toc()
 
 cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde_df sparse64v")
-# time and run BioQC
 fastdewilcox_df64v <- fastde::sparse_wmw_fastv(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
 cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde sparse644v")
-# time and run BioQC
 fastdewilcox644v <- fastde::sparse_wmw_fastv(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
@@ -442,7 +362,6 @@ toc()
 
 cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde_df sparse644v")
-# time and run BioQC
 fastdewilcox_df644v <- fastde::sparse_wmw_fastv(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
@@ -451,7 +370,6 @@ toc()
 
 ## compare by calculating the residuals.
 comparemat("R vs sparse64 fastde", Rwilcox, fastdewilcox64)
-# comparemat("bioqc vs sparse fastde", BioQCwilcox2, fastdewilcox)
 # comparemat("limma vs sparse64 fastde", Limmawilcox, fastdewilcox)
 
 comparemat("R vs sparse64 fastde", Rwilcox, fastdewilcox64v)

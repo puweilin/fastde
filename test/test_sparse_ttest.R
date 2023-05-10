@@ -124,7 +124,6 @@ print_mat(Rmean, 5)
 # Rmean[1, ]
 
 tic("fastde t stat")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdetval <- fastde::ttest_fast(as.matrix(input), labels, as_dataframe = FALSE, threads = nthreads, alternative =  as.integer(3), var_equal = FALSE)
 toc()
@@ -133,7 +132,6 @@ comparemat("R vs dense tstat", Rmean, fastdetval)
 print_mat(fastdetval, 5)
 
 tic("sparse fastde t stat")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdesparsetval <- fastde::sparse_ttest_fast(input, labels, features_as_rows = FALSE, as_dataframe = FALSE, threads = nthreads, alternative = as.integer(3), var_equal = FALSE)
 toc()
@@ -183,7 +181,6 @@ print_mat(Rmean, 5)
 # Rmean[1, ]
 
 tic("fastde t dof")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdetval <- fastde::ttest_fast(as.matrix(input), labels, as_dataframe = FALSE, threads = nthreads, alternative =  as.integer(4), var_equal = FALSE)
 toc()
@@ -193,7 +190,6 @@ print_mat(fastdetval, 5)
 
 
 tic("sparse fastde t dof")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdesparsetval <- fastde::sparse_ttest_fast(input, labels, features_as_rows = FALSE,  as_dataframe = FALSE, threads = nthreads, alternative = as.integer(4), var_equal = FALSE)
 toc()
@@ -281,7 +277,6 @@ toc()
 
 
 tic("fastde_df ttest")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdettest_df <- fastde::ttest_fast(as.matrix(input), labels,  as_dataframe = TRUE, threads = nthreads, alternative =  as.integer(2), var_equal = FALSE)
 toc()
@@ -311,14 +306,12 @@ print_mat(fastdettest, 5)
 
 
 tic("sparse fastde")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdesparsettest <- fastde::sparse_ttest_fast(input, labels,features_as_rows = FALSE,  as_dataframe = FALSE, threads = nthreads, alternative =  as.integer(2), var_equal = FALSE)
 toc()
 
 
 tic("sparse fastde_df")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdesparsettest_df <- fastde::sparse_ttest_fast(input, labels, features_as_rows = FALSE,  as_dataframe = TRUE, threads = nthreads, alternative =  as.integer(2), var_equal = FALSE)
 toc()
@@ -351,14 +344,12 @@ print("Convert to sparse 64bit")
 input64 <- as.dgCMatrix64(input)
 
 tic("sparse64 fastde")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input64), ncol(input64)))
 fastdesparsettest <- fastde::sparse_ttest_fast(input64, labels, features_as_rows = FALSE, as_dataframe = FALSE, threads = nthreads, alternative =  as.integer(2), var_equal = FALSE)
 toc()
 
 
 tic("sparse64 fastde_df")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input64), ncol(input64)))
 fastdesparsettest_df <- fastde::sparse_ttest_fast(input64, labels, features_as_rows = FALSE,  as_dataframe = TRUE, threads = nthreads, alternative =  as.integer(2), var_equal = FALSE)
 toc()

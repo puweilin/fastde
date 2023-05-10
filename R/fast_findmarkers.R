@@ -208,7 +208,7 @@ FastFindAllMarkers <- function(
   #   node is null
   #   test.use = "fastwmw"
   # what does this do?
-  if ((test.use == "fastwmw") || (test.use == "bioqc") || (test.use == 'fast_t') ) {
+  if ((test.use == "fastwmw") || (test.use == 'fast_t') ) {
     tictoc::tic("FindAllMarkers")
   
     # Idents get the cell identity (not name), which correspond to cluster ids? 
@@ -319,8 +319,8 @@ FastFindAllMarkers <- function(
 #' \itemize{
 #'  \item{"fastwmw"} : Identifies differentially expressed genes between two
 #'  groups of cells using a Wilcoxon Rank Sum test.  fast Wilcoxon test variant.
-#'  \item{"bioqc"} : Identifies differentially expressed genes between two
-#'  groups of cells using a Wilcoxon Rank Sum test.  BioQC Wilcoxon test variant
+#'  \item{"fast-t"} : Identifies differentially expressed genes between two
+#'  groups of cells using Student's t-test.  
 #' }
 #' @param min.pct  only test genes that are detected in a minimum fraction of
 #' min.pct cells in either of the two populations. Meant to speed up the function
@@ -949,7 +949,6 @@ FastPerformDE <- function(
     } else {
       FastDiffTTest
     },
-    'bioqc' = BioQCDETest,
     stop("fastDE Unknown test: ", test.use)
   )
 

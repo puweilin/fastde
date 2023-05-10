@@ -439,7 +439,7 @@ seurat_find_markers <- function(integrated_sobject, out_dir, vis_option,
     tic("[TIME] Seurat Find Markers")
     if (!(is.na(all_markers_file))) {
         cat("Generating All Markers ... \n")
-        if ((test_option == "fastwmw") || (test_option == "bioqc") || (test_option == "fast_t")) {
+        if ((test_option == "fastwmw") || (test_option == "fast_t")) {
             mkdf <- fastde::FastFindAllMarkers(integrated_sobject,
                                                 test.use = test_option)
         } else {

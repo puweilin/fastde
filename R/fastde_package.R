@@ -8,7 +8,6 @@
 #' @import Seurat 
 #' @import Matrix 
 #' @import rhdf5 
-#' @import BioQC
 #' @import methods
 #' @import future
 #' @useDynLib fastde, .registration = TRUE

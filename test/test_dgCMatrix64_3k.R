@@ -25,7 +25,6 @@ labels <- as.integer(sample(clusters, nrows, replace = TRUE))
 toc()
 
 tic("sparse fastde FC")
-# time and run BioQC
 fastdefc <- fastde::ComputeFoldChangeSparse(fastde::sp_transpose(sobject, threads = as.integer(1)), labels, 
     features_as_rows = FALSE,
     calc_percents = TRUE, fc_name = "fc", 
@@ -35,7 +34,6 @@ toc()
 # str(fastdefc)
 
 tic("sparse fastde FC 4")
-# time and run BioQC
 fastdefc <- fastde::ComputeFoldChangeSparse(fastde::sp_transpose(sobject, threads = as.integer(4)), labels, 
     features_as_rows = FALSE,
     calc_percents = TRUE, fc_name = "fc", 
@@ -46,7 +44,6 @@ toc()
 
 
 tic("sparse fastde FC 4 transpose")
-# time and run BioQC
 fastdefc <- fastde::ComputeFoldChangeSparse(sobject, labels, 
     features_as_rows = TRUE,
     calc_percents = TRUE, fc_name = "fc", 
@@ -80,7 +77,6 @@ toc()
 
 
 tic("sparse fastde 64 FC")
-# time and run BioQC
 fastdefc2 <- fastde::ComputeFoldChangeSparse(fastde::sp_transpose(so64, threads = as.integer(4)), labels, 
     features_as_rows = FALSE,
     calc_percents = TRUE, fc_name = "fc", 
@@ -90,7 +86,6 @@ toc()
 # str(fastdefc2)
 
 tic("sparse fastde 64 FC, transpose")
-# time and run BioQC
 fastdefc2 <- fastde::ComputeFoldChangeSparse(so64, labels, 
     features_as_rows = TRUE,
     calc_percents = TRUE, fc_name = "fc", 
@@ -156,7 +151,6 @@ message("FINISHED 3")
 
 
 # tic("sparse fastde 64 FC")
-# # time and run BioQC
 # fastdefc3 <- fastde::ComputeFoldChangeSparse(sobject2, labels2, calc_percents = TRUE, fc_name = "fc", 
 #     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 
 #     use_pseudocount = FALSE, as_dataframe = FALSE, threads = as.integer(1))

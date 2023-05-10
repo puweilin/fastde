@@ -18,7 +18,7 @@ qc="scran"
 vis="umap"
 m="m"
 
-for te in "fastwmw" "fast_t"; do # "bioqc"; do # "wilcox"; do
+for te in "fastwmw" "fast_t"; do # "wilcox"; do
 
 for prefix in "pbmc3k" "pbmc6k" "pbmc8k"; do  # 
     d=${prefix}_${f}

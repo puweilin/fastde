@@ -32,7 +32,6 @@ toc()
 start_time <- Sys.time()
 message("FC SEXP Sys.time start", start_time)
 tic("sparse fastde 64 FC SEXP")
-# time and run BioQC
 fastdefc3 <- fastde::ComputeFoldChangeSparse64SEXP(fastde::sp_transpose(sobject2), labels2, calc_percents = TRUE, fc_name = "fc", 
     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 
     use_pseudocount = FALSE, as_dataframe = TRUE, threads = as.integer(nworkers))
@@ -44,7 +43,6 @@ message("FC SEXP Sys.time end ", end_time, "duration", end_time - start_time)
 start_time <- Sys.time()
 message("FC Sys.time start", start_time)
 tic("sparse fastde 64 FC")
-# time and run BioQC
 fastdefc3 <- fastde::ComputeFoldChangeSparse64(fastde::sp_transpose(sobject2), labels2, calc_percents = TRUE, fc_name = "fc", 
     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 
     use_pseudocount = FALSE, as_dataframe = TRUE, threads = as.integer(nworkers))

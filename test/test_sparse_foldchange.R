@@ -131,7 +131,6 @@ colnames(x) <- genenames
 toc()
 
 tic("fastde df")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(x), ncol(x)))
 str(x)
 fastdefc_df <- fastde::ComputeFoldChange(x, labels, calc_percents = TRUE, fc_name = "fc", 
@@ -141,7 +140,6 @@ str(fastdefc_df)
 toc()
 
 tic("fastde")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(x), ncol(x)))
 fastdefc <- fastde::ComputeFoldChange(x, labels, calc_percents = TRUE, fc_name = "fc", 
     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 
@@ -187,7 +185,6 @@ cat(sprintf("different 3: seurat %f, fastde %f \n", seuratperc1[diff[3]], fastde
 Rprof(filename = "fastde.out", interval=0.001, memory.profiling=TRUE, gc.profiling=TRUE, line.profiling=TRUE)
 
 tic("sparse fastde df")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdesfc_df <- fastde::ComputeFoldChangeSparse(input, labels, features_as_rows = FALSE, calc_percents = TRUE, fc_name = "fc", 
     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 
@@ -196,7 +193,6 @@ toc()
 Rprof(NULL)
 
 tic("sparse fastde")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdesfc <- fastde::ComputeFoldChangeSparse(input, labels, features_as_rows = FALSE, calc_percents = TRUE, fc_name = "fc", 
     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 
@@ -249,7 +245,6 @@ features <- input64@Dimnames[2]
 
 
 tic("sparse64 fastde df")
-# time and run BioQC
 cat(sprintf("input 64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdesfc_df <- fastde::ComputeFoldChangeSparse(input64, labels, features_as_rows = FALSE, calc_percents = TRUE, fc_name = "fc", 
     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 
@@ -258,7 +253,6 @@ toc()
 
 
 tic("sparse64 fastde")
-# time and run BioQC
 cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdesfc <- fastde::ComputeFoldChangeSparse(input64, labels, features_as_rows = FALSE, calc_percents = TRUE, fc_name = "fc", 
     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 

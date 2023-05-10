@@ -103,7 +103,6 @@ cat(sprintf("seurat output %d X %d\n", nrow(seuratfc), ncol(seuratfc)))
 
 
 tic("fastde df")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdefc_df <- fastde::ComputeFoldChange(input, labels, calc_percents = TRUE, fc_name = "fc", 
     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 
@@ -111,7 +110,6 @@ fastdefc_df <- fastde::ComputeFoldChange(input, labels, calc_percents = TRUE, fc
 toc()
 
 tic("fastde")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdefc <- fastde::ComputeFoldChange(input, labels, calc_percents = TRUE, fc_name = "fc", 
     use_expm1 = FALSE, min_threshold = 0.0, use_log = FALSE, log_base = 2.0, 
