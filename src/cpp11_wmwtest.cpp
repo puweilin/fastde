@@ -12,6 +12,9 @@
 #include "utils_sparsemat.hpp"
 
 
+// direct write to matrix may not be fast for cpp11:  proxy object creation and iterator creation....
+
+
 [[cpp11::register]]
 extern cpp11::sexp cpp11_dense_wmw(
     cpp11::doubles_matrix<cpp11::by_column> const & input, 
@@ -60,13 +63,18 @@ extern cpp11::sexp cpp11_dense_wmw(
   free(lab);
 
   // ------------------------ generate output
+  cpp11::sexp out;
+  start = std::chrono::steady_clock::now();
+
   if (as_dataframe) {
-    return(cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features)));
+    out = cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features));
   } else {
     // use clust for column names.
-    return (cpp11::as_sexp(export_vec_to_r_matrix<cpp11::writable::doubles_matrix<cpp11::by_column>>(pv,
-      sorted_cluster_counts.size(), pv.size() / sorted_cluster_counts.size())));
+    out = cpp11::as_sexp(export_vec_to_r_matrix<cpp11::writable::doubles_matrix<cpp11::by_column>>(pv,
+      sorted_cluster_counts.size(), pv.size() / sorted_cluster_counts.size()));
   }
+  Rprintf("[TIME] copy out Elapsed(ms)= %f\n", since(start).count());
+  return out;
 }
 
 
@@ -98,27 +106,42 @@ extern cpp11::sexp cpp11_dense_wmw_vec(
   count_clusters_vec(labels, labels.size(), sorted_cluster_counts, threads);
   size_t label_count = sorted_cluster_counts.size();
 
-  std::vector<double> pv(label_count * nfeatures, 0);
-
   Rprintf("[TIME] WMW count labels Elapsed(ms)= %f\n", since(start).count());
 
-
+  // working with writable matrix directly is costly, probably because of creation of "proxy" objects 
+  // for every element.   and to a lesser degree "slice" objects
   start = std::chrono::steady_clock::now();
+  cpp11::sexp out;
+  // if (as_dataframe) {
+    std::vector<double> pv(label_count * nfeatures, 0);
+    matc_wmw_vecsc(input, nsamples, nfeatures, labels, 
+      rtype, continuity_correction, pv, sorted_cluster_counts, threads);
+  //   out = cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features));
+  // } else {
+  //   cpp11::writable::doubles_matrix<cpp11::by_column> pv(label_count, nfeatures);
+  //   matc_wmw_matc(input, nsamples, nfeatures, labels, 
+  //     rtype, continuity_correction, pv, sorted_cluster_counts, threads);
+  //   out = cpp11::as_sexp(pv);
+  // }
 
-  csc_dense_wmw_mat(input, nsamples, nfeatures, labels, 
-    rtype, continuity_correction, pv, sorted_cluster_counts, threads);
 
   Rprintf("[TIME] WMW DN Elapsed(ms)= %f\n", since(start).count());
 
 
   // ------------------------ generate output
+  // return out;
+
+  start = std::chrono::steady_clock::now();
+
   if (as_dataframe) {
-    return(cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features)));
+    out = cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features));
   } else {
     // use clust for column names.
-    return (cpp11::as_sexp(export_vec_to_r_matrix<cpp11::writable::doubles_matrix<cpp11::by_column>>(pv,
-      sorted_cluster_counts.size(), pv.size() / sorted_cluster_counts.size())));
+    out = cpp11::as_sexp(export_vec_to_r_matrix<cpp11::writable::doubles_matrix<cpp11::by_column>>(pv,
+      sorted_cluster_counts.size(), pv.size() / sorted_cluster_counts.size()));
   }
+  Rprintf("[TIME] copy out Elapsed(ms)= %f\n", since(start).count());
+  return out;
 }
 
 template <typename PT>
@@ -192,15 +215,19 @@ extern cpp11::sexp _compute_wmwtest_sparse(
   free(x);
   free(lab);
   // ------------------------ generate output
+  cpp11::sexp out;
+  start = std::chrono::steady_clock::now();
+
   if (as_dataframe) {
-    return(cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features)));
+    out = cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features));
   } else {
     // use clust for column names.
-    return (cpp11::as_sexp(export_vec_to_r_matrix<cpp11::writable::doubles_matrix<cpp11::by_column>>(pv,
-      sorted_cluster_counts.size(), pv.size() / sorted_cluster_counts.size())));
+    out = cpp11::as_sexp(export_vec_to_r_matrix<cpp11::writable::doubles_matrix<cpp11::by_column>>(pv,
+      sorted_cluster_counts.size(), pv.size() / sorted_cluster_counts.size()));
   }
+  Rprintf("[TIME] copy out Elapsed(ms)= %f\n", since(start).count());
+  return out;
 }
-
 
 
 template <typename PT>
@@ -234,13 +261,13 @@ extern cpp11::sexp _compute_wmwtest_sparse_vec(
   count_clusters_vec(labels, labels.size(), sorted_cluster_counts, threads);
   size_t label_count = sorted_cluster_counts.size();
 
-  std::vector<double> pv(label_count * nfeatures, 0);
 
   Rprintf("[TIME] WMW count labels Elapsed(ms)= %f\n", since(start).count());
 
 
   // ---- output pval matrix
-
+  std::vector<double> pv(label_count * nfeatures, 0);
+  cpp11::sexp out;
   if (features_as_rows) {
     start = std::chrono::steady_clock::now();
 
@@ -262,11 +289,27 @@ extern cpp11::sexp _compute_wmwtest_sparse_vec(
 
     start = std::chrono::steady_clock::now();
 
-    csc_sparse_wmw_vec(x, i, p, nsamples, nfeatures, labels, 
-      rtype, continuity_correction,
-      pv, sorted_cluster_counts, threads);
+    // if (as_dataframe) {
+    //   std::vector<double> pv(label_count * nfeatures, 0);
+
+      csc_wmw_vecsc(x, i, p, nsamples, nfeatures, labels, 
+        rtype, continuity_correction,
+        pv, sorted_cluster_counts, threads);
+
+    //   out = cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features));
+      
+    // } else {
+    //   cpp11::writable::doubles_matrix<cpp11::by_column> pv(label_count, nfeatures);
+
+    //   csc_wmw_matc(x, i, p, nsamples, nfeatures, labels, 
+    //     rtype, continuity_correction,
+    //     pv, sorted_cluster_counts, threads);
+
+    //   out = cpp11::as_sexp(pv);
+    // }
 
     Rprintf("[TIME] WMW Elapsed(ms)= %f\n", since(start).count());
+
 
     // free(p);
     // free(i);
@@ -275,22 +318,42 @@ extern cpp11::sexp _compute_wmwtest_sparse_vec(
   } else {
     start = std::chrono::steady_clock::now();
 
-    csc_sparse_wmw_vec(_x, _i, _p, nsamples, nfeatures, labels, 
-      rtype, continuity_correction, 
-      pv, sorted_cluster_counts, threads);
+    // if (as_dataframe) {
+    //   std::vector<double> pv(label_count * nfeatures, 0);
+
+      csc_wmw_vecsc(_x, _i, _p, nsamples, nfeatures, labels, 
+        rtype, continuity_correction, 
+        pv, sorted_cluster_counts, threads);
+
+      // out = cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features));
+      
+    // } else {
+    //   cpp11::writable::doubles_matrix<cpp11::by_column> pv(label_count, nfeatures);
+
+    //   csc_wmw_matc(_x, _i, _p, nsamples, nfeatures, labels, 
+    //     rtype, continuity_correction, 
+    //     pv, sorted_cluster_counts, threads);
+
+    //   out = cpp11::as_sexp(pv);
+    // }
 
     Rprintf("[TIME] WMW Elapsed(ms)= %f\n", since(start).count());
   }
   // Rprintf("Sparse DIM: samples %lu x features %lu, non-zeros %lu\n", nsamples, nfeatures, nelem); 
 
   // ------------------------ generate output
+  start = std::chrono::steady_clock::now();
+
   if (as_dataframe) {
-    return(cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features)));
+    out = cpp11::as_sexp(export_vec_to_r_dataframe(pv, "p_val", sorted_cluster_counts, features));
   } else {
     // use clust for column names.
-    return (cpp11::as_sexp(export_vec_to_r_matrix<cpp11::writable::doubles_matrix<cpp11::by_column>>(pv,
-      sorted_cluster_counts.size(), pv.size() / sorted_cluster_counts.size())));
+    out = cpp11::as_sexp(export_vec_to_r_matrix<cpp11::writable::doubles_matrix<cpp11::by_column>>(pv,
+      sorted_cluster_counts.size(), pv.size() / sorted_cluster_counts.size()));
   }
+  Rprintf("[TIME] copy out Elapsed(ms)= %f\n", since(start).count());
+  return out;
+
 }
 
 

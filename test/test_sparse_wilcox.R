@@ -40,7 +40,7 @@ comparemat <- function(name, A, B) {
 
 tic("generate")
 # max is 2B.
-ncols = 100  # features  - test with a small number. this is totally parallel
+ncols = 1000  # features  - test with a small number. this is totally parallel
 nrows = 10000  # samples
 nclusters = 30
 
@@ -77,16 +77,21 @@ toc()
 # cat(sprintf("\n"))
 
 
+tic("Densify")
+dinput = as.matrix(input)
+toc()
+
 # time and run wilcox.test
 tic("R builtin")
 Rwilcox <- matrix(, ncol = ncols, nrow = length(L) )
-for ( gene in 1:ncol(input) ) {
-    x <- matrix(as.vector(input[, gene]), ncol=1)
+for ( gene in 1:ncol(dinput) ) {
+    # x <- matrix(as.vector(input[, gene]), ncol=1)
+    x <- dinput[, gene]
     # cat(sprintf("gene %d \n", gene))
     # cat(sprintf("x size:  r %d X c %d.\n", nrow(x), ncol(x)))
     i <- 1
     for ( c in L ) {
-        lab <- labels %in% c
+        # lab <- labels %in% c
 
         v <- wilcox.test(x = x[which(labels == c)], y= x[which(labels != c)], alternative="two.sided", correct=TRUE)
         # cat(sprintf("R wilcox %f\n", v))
@@ -96,97 +101,99 @@ for ( gene in 1:ncol(input) ) {
 }
 toc()
 
-tic("Limma")
-# time and run LIMMA
-Limmawilcox <- matrix(, ncol = ncols, nrow = length(L) )
-for ( gene in 1:ncol(input) ) {
-    x <- matrix(as.vector(input[, gene]), ncol=1)
-    # cat(sprintf("gene %d \n", gene))
-    # cat(sprintf("x size:  r %d X c %d.\n", nrow(x), ncol(x)))
+# tic("Limma")
+# # time and run LIMMA
+# Limmawilcox <- matrix(, ncol = ncols, nrow = length(L) )
+# for ( gene in 1:ncol(input) ) {
+#     # x <- matrix(as.vector(input[, gene]), ncol=1)
+#     x <- dinput[, gene]
+#     # cat(sprintf("gene %d \n", gene))
+#     # cat(sprintf("x size:  r %d X c %d.\n", nrow(x), ncol(x)))
     
-    i <- 1
-    for ( c in L ) {
-        ind <- which(labels %in% c)
+#     i <- 1
+#     for ( c in L ) {
+#         ind <- which(labels %in% c)
         
-        ## two sided
-        v <- min(2 * min(limma::rankSumTestWithCorrelation(index = ind, statistics = x)), 1)  # two sides.
+#         ## two sided
+#         v <- min(2 * min(limma::rankSumTestWithCorrelation(index = ind, statistics = x)), 1)  # two sides.
         
-        ## less
-        # v <- limma::rankSumTestWithCorrelation(index = ind, statistics = x)[1]  # less, left tail
-        ## greater
-        # v <- limma::rankSumTestWithCorrelation(index = ind, statistics = x)[2]    # greater, right tail
-        # cat(sprintf("limma %f\n", v))
-        Limmawilcox[i, gene] <- v
-        i <- i + 1
-    }
-}
-toc()
-# warnings()
+#         ## less
+#         # v <- limma::rankSumTestWithCorrelation(index = ind, statistics = x)[1]  # less, left tail
+#         ## greater
+#         # v <- limma::rankSumTestWithCorrelation(index = ind, statistics = x)[2]    # greater, right tail
+#         # cat(sprintf("limma %f\n", v))
+#         Limmawilcox[i, gene] <- v
+#         i <- i + 1
+#     }
+# }
+# toc()
+# # warnings()
 
 
 
+cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-fastdewilcox <- fastde::wmw_fast(as.matrix(input), labels, rtype=as.integer(2), 
+
+fastdewilcox <- fastde::wmw_fast(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
 
 
+cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde_df")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-fastdewilcox_df <- fastde::wmw_fast(as.matrix(input), labels, rtype=as.integer(2), 
+fastdewilcox_df <- fastde::wmw_fast(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
 
 
+cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde 4")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-fastdewilcox4 <- fastde::wmw_fast(as.matrix(input), labels, rtype=as.integer(2), 
+fastdewilcox4 <- fastde::wmw_fast(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
 
 
+cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde_df 4")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-fastdewilcox_df4 <- fastde::wmw_fast(as.matrix(input), labels, rtype=as.integer(2), 
+fastdewilcox_df4 <- fastde::wmw_fast(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
 
 
+cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastdev")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-fastdewilcoxv <- fastde::wmw_fastv(as.matrix(input), labels, rtype=as.integer(2), 
+fastdewilcoxv <- fastde::wmw_fastv(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
 
 
+cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde_dfv")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-fastdewilcox_dfv <- fastde::wmw_fastv(as.matrix(input), labels, rtype=as.integer(2), 
+fastdewilcox_dfv <- fastde::wmw_fastv(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
 
 
+cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde 4v")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-fastdewilcox4v <- fastde::wmw_fastv(as.matrix(input), labels, rtype=as.integer(2), 
+fastdewilcox4v <- fastde::wmw_fastv(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
 
 
+cat(sprintf("input %d X %d\n", nrow(dinput), ncol(dinput)))
 tic("fastde_df 4v")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
-fastdewilcox_df4v <- fastde::wmw_fastv(as.matrix(input), labels, rtype=as.integer(2), 
+fastdewilcox_df4v <- fastde::wmw_fastv(dinput, labels, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
 
@@ -292,7 +299,7 @@ toc()
 # compare by calculating the residuals.
 comparemat("R vs fastde", Rwilcox, fastdewilcox)
 # comparemat("bioqc vs fastde", BioQCwilcox2, fastdewilcox)
-comparemat("limma vs fastde", Limmawilcox, fastdewilcox)
+# comparemat("limma vs fastde", Limmawilcox, fastdewilcox)
 
 comparemat("R vs fastde", Rwilcox, fastdewilcoxv)
 comparemat("R vs fastde", Rwilcox, fastdewilcox4)
@@ -304,62 +311,62 @@ comparemat("R vs fastde", Rwilcox, fastdewilcox4v)
 
 
 
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde sparse")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdewilcox <- fastde::sparse_wmw_fast(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
 
 
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde_df sparse")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdewilcox_df <- fastde::sparse_wmw_fast(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde sparse 4")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdewilcox4 <- fastde::sparse_wmw_fast(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
 
 
+cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 tic("fastde_df sparse 4")
 # time and run BioQC
-cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
 fastdewilcox_df4 <- fastde::sparse_wmw_fast(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
 
-tic("fastde sparse")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+tic("fastde sparsev")
+# time and run BioQC
 fastdewilcoxv <- fastde::sparse_wmw_fastv(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
 
 
-tic("fastde_df sparse")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+tic("fastde_df sparsev")
+# time and run BioQC
 fastdewilcox_dfv <- fastde::sparse_wmw_fastv(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
-tic("fastde sparse 4")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+tic("fastde sparse 4v")
+# time and run BioQC
 fastdewilcox4v <- fastde::sparse_wmw_fastv(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
 
 
-tic("fastde_df sparse 4")
-# time and run BioQC
 cat(sprintf("input %d X %d\n", nrow(input), ncol(input)))
+tic("fastde_df sparse 4v")
+# time and run BioQC
 fastdewilcox_df4v <- fastde::sparse_wmw_fastv(input, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
@@ -370,7 +377,7 @@ toc()
 ## compare by calculating the residuals.
 comparemat("R vs sparse fastde", Rwilcox, fastdewilcox)
 # comparemat("bioqc vs sparse fastde", BioQCwilcox2, fastdewilcox)
-comparemat("limma vs sparse fastde", Limmawilcox, fastdewilcox)
+# comparemat("limma vs sparse fastde", Limmawilcox, fastdewilcox)
 
 comparemat("R vs sparse fastde", Rwilcox, fastdewilcox4)
 comparemat("R vs sparse fastde", Rwilcox, fastdewilcoxv)
@@ -380,62 +387,62 @@ comparemat("R vs sparse fastde", Rwilcox, fastdewilcox4v)
 print("CONVERT To 64bit")
 input64 <- as.dgCMatrix64(input)
 
+cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde sparse64")
 # time and run BioQC
-cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdewilcox64 <- fastde::sparse_wmw_fast(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
 
 
+cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde_df sparse64")
 # time and run BioQC
-cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdewilcox_df64 <- fastde::sparse_wmw_fast(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
+cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde sparse644")
 # time and run BioQC
-cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdewilcox644 <- fastde::sparse_wmw_fast(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
 
 
+cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde_df sparse644")
 # time and run BioQC
-cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdewilcox_df644 <- fastde::sparse_wmw_fast(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
 
+cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde sparse64v")
 # time and run BioQC
-cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdewilcox64v <- fastde::sparse_wmw_fastv(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(1))
 toc()
 
 
+cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde_df sparse64v")
 # time and run BioQC
-cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdewilcox_df64v <- fastde::sparse_wmw_fastv(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(1))
 toc()
 
+cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde sparse644v")
 # time and run BioQC
-cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdewilcox644v <- fastde::sparse_wmw_fastv(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = FALSE, threads = as.integer(4))
 toc()
 
 
+cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 tic("fastde_df sparse644v")
 # time and run BioQC
-cat(sprintf("input64 %d X %d\n", nrow(input64), ncol(input64)))
 fastdewilcox_df644v <- fastde::sparse_wmw_fastv(input64, labels, features_as_rows = FALSE, rtype=as.integer(2), 
     continuity_correction=TRUE, as_dataframe = TRUE, threads = as.integer(4))
 toc()
@@ -445,7 +452,7 @@ toc()
 ## compare by calculating the residuals.
 comparemat("R vs sparse64 fastde", Rwilcox, fastdewilcox64)
 # comparemat("bioqc vs sparse fastde", BioQCwilcox2, fastdewilcox)
-comparemat("limma vs sparse64 fastde", Limmawilcox, fastdewilcox)
+# comparemat("limma vs sparse64 fastde", Limmawilcox, fastdewilcox)
 
 comparemat("R vs sparse64 fastde", Rwilcox, fastdewilcox64v)
 comparemat("R vs sparse64 fastde", Rwilcox, fastdewilcox644)

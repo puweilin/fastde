@@ -1,10 +1,10 @@
 Package: fastde
 Type: Package
-Title: performs differential expression
-Version: 0.4
-Date: 2022-07-20
+Title: Fast Differential Gene Expression
+Version: 0.5
+Date: 2023-05-09
 Author: Tony Pan
-Maintainer: Tony Pan <tpan7@gatech.edu>
+Maintainer: Tony Pan <tcpan@emory.edu>
 Description: Fast parallel differential gene expression analysis tool, replacement for Seurat's FindAllMarkers and FoldChange functions.
 License: Apache 2.0 | file LICENSE
 Imports: 
