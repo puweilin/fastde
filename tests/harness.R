@@ -69,24 +69,34 @@ load_pbmc3k <- function() {
 }
 
 #' @import Seurat
+#' @import future
 seurat_pipeline <- function(sobj) {
-    pbmc <- Seurat::NormalizeData(sobj, normalization.method = "LogNormalize", scale.factor = 10000)
-    # future::plan(sequential)
+    future::plan(sequential)
     
+    pbmc <- Seurat::NormalizeData(sobj, normalization.method = "LogNormalize", scale.factor = 10000)
+    
+    
+    # vst throws some kind of error or warning: 
+    # In simpleLoess(y, x, w, span, degree = degree, parametric = parametric,  :
+    # Chernobyl! trL<k 1.8409
+    # thi means not enough data poitns to for loess smooth estimation
     pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
     all.genes <- rownames(pbmc)
 
-    pbmc <- Seurat::ScaleData(pbmc, features = all.genes, verbose = FALSE, scale.max = 1000000)
-
+    pbmc2 <- Seurat::ScaleData(pbmc, features = all.genes, verbose = FALSE, scale.max = 100000)
 
     # PCA is using OMP_NUM_THREADS and is not paralleliezd in Seurat
-    pbmc <- Seurat::RunPCA(pbmc, features = VariableFeatures(object = pbmc), verbose = FALSE, npcs=50)
+    # if component == 50, irlba fails with   "BLAS/LAPACK routine 'DLASCL' gave error code -4"
+    # 30 components is fine.
+    pbmc <- Seurat::RunPCA(pbmc2, features = VariableFeatures(object = pbmc), verbose = FALSE, npcs=30)
 
     pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:10)
 
     pbmc <- Seurat::FindClusters(pbmc, resolution = 0.5)
 
-    pbmc <- Seurat::RunUMAP(pbmc, dims = 1:10)
+    # in this pipeline, calling RunUMAP causes failure,
+    # due to non finite values in matrix.
+    # pbmc <- Seurat::RunUMAP(pbmc, dims = 1:10)
 
     return(pbmc)
 }

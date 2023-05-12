@@ -46,3 +46,5 @@ man/*.Rd
 src/*.rds
 
 .vscode
+
+tests/data/*.Rdata
