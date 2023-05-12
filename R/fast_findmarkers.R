@@ -3,27 +3,31 @@
 # Functions
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+#' @importFrom future availableCores
+#' @importFrom future nbrOfWorkers
 get_num_threads <- function() {
-  message("setting max ", availableCores(), " requested ", nbrOfWorkers())
-  nthreads = pmin(nbrOfWorkers(), availableCores())
+  message("setting max ", future::availableCores(), " requested ", future::nbrOfWorkers())
+  nthreads = pmin(future::nbrOfWorkers(), future::availableCores())
   return(nthreads)
 }
 
 #' 
 #' Gene expression markers for all identity classes
 #'
-#' Finds markers (differentially expressed genes) for each of the identity classes in a dataset
+#' Finds all markers (differentially expressed genes) for each of the identity classes in a dataset
+#' Follows Seurat's FindAllMarkers function signature, and will delegate to Seurat's version
 #'
 #' @inheritParams FastFindMarkers
+#' @param idents.clusters cell labels, integer cluster ids for each cell.
+#' @param test.use Denotes which test to use. 
+#' Available options are:
+#' \itemize{
+#'  \item{"fastwmw"} : sparse matrix based fast Wilcoxon Rank Sum test (default)
+#'  \item{"fast-t"} : sparse matrix based fast student's t-test
+#' }
 #' @param return.thresh Only return markers that have a p-value < return.thresh, or a power > return.thresh (if the test is ROC)
-#' @param node FIXME
-#' @param max.cells.per.ident FIXME
-#' @param random.seed FIXME
-#' @param latent.vars FIXME
-#' @param min.cells.feature FIXME
-#' @param min.cells.group FIXME
-#' @param mean.fxn FIXME
+#' @param node A node to find markers for and all its children; requires
+#' \code{\link{BuildClusterTree}} to have been run previously; replaces \code{FindAllMarkersNode}
 #'
 #' @return Matrix containing a ranked list of putative markers, and associated
 #' statistics (p-values, ROC score, etc.)
@@ -40,12 +44,12 @@ get_num_threads <- function() {
 # @examples
 # data("pbmc_small")
 # # Find markers for all clusters
-# all.markers <- FindAllMarkers(object = pbmc_small)
+# all.markers <- FastFindAllMarkers64(object = pbmc_small)
 # head(x = all.markers)
 # \dontrun{
 # # Pass a value to node as a replacement for FindAllMarkersNode
 # pbmc_small <- BuildClusterTree(object = pbmc_small)
-# all.markers <- FindAllMarkers(object = pbmc_small, node = 4)
+# all.markers <- FastFindAllMarkers64(object = pbmc_small, node = 4)
 # head(x = all.markers)
 # }
 #
@@ -62,13 +66,7 @@ FastFindAllMarkers64 <- function(
   node = NULL,
   verbose = FALSE,
   only.pos = FALSE,
-  max.cells.per.ident = Inf,
-  random.seed = 1,
-  latent.vars = NULL,
-  min.cells.feature = 3,
-  min.cells.group = 3,
   pseudocount.use = 1,
-  mean.fxn = NULL,
   fc.name = NULL,
   base = 2,
   return.thresh = 1e-2,
@@ -147,14 +145,53 @@ FastFindAllMarkers64 <- function(
 #' Finds markers (differentially expressed genes) for each of the identity classes in a dataset
 #'
 #' @inheritParams FastFindMarkers
+#' @param test.use Denotes which test to use. All tests except for fastwmw and fast-t
+#' are passed through to Seurat's FindMarkers function
+#' Available options are:
+#' \itemize{
+#'  \item{"fastwmw"} : sparse matrix based fast Wilcoxon Rank Sum test (default)
+#'  \item{"fast-t"} : sparse matrix based fast student's t-test
+#'  \item{"wilcox"} : Identifies differentially expressed genes between two
+#'  groups of cells using a Wilcoxon Rank Sum test 
+#'  \item{"bimod"} : Likelihood-ratio test for single cell gene expression,
+#'  (McDavid et al., Bioinformatics, 2013)
+#'  \item{"roc"} : Identifies 'markers' of gene expression using ROC analysis.
+#'  For each gene, evaluates (using AUC) a classifier built on that gene alone,
+#'  to classify between two groups of cells. An AUC value of 1 means that
+#'  expression values for this gene alone can perfectly classify the two
+#'  groupings (i.e. Each of the cells in cells.1 exhibit a higher level than
+#'  each of the cells in cells.2). An AUC value of 0 also means there is perfect
+#'  classification, but in the other direction. A value of 0.5 implies that
+#'  the gene has no predictive power to classify the two groups. Returns a
+#'  'predictive power' (abs(AUC-0.5) * 2) ranked matrix of putative differentially
+#'  expressed genes.
+#'  \item{"t"} : Identify differentially expressed genes between two groups of
+#'  cells using the Student's t-test.
+#'  \item{"negbinom"} : Identifies differentially expressed genes between two
+#'   groups of cells using a negative binomial generalized linear model.
+#'   Use only for UMI-based datasets
+#'  \item{"poisson"} : Identifies differentially expressed genes between two
+#'   groups of cells using a poisson generalized linear model.
+#'   Use only for UMI-based datasets
+#'  \item{"LR"} : Uses a logistic regression framework to determine differentially
+#'  expressed genes. Constructs a logistic regression model predicting group
+#'  membership based on each feature individually and compares this to a null
+#'  model with a likelihood ratio test.
+#'  \item{"MAST"} : Identifies differentially expressed genes between two groups
+#'  of cells using a hurdle model tailored to scRNA-seq data. Utilizes the MAST
+#'  package to run the DE testing.
+#'  \item{"DESeq2"} : Identifies differentially expressed genes between two groups
+#'  of cells based on a model using DESeq2 which uses a negative binomial
+#'  distribution (Love et al, Genome Biology, 2014).This test does not support
+#'  pre-filtering of genes based on average difference (or percent detection rate)
+#'  between cell groups. However, genes may be pre-filtered based on their
+#'  minimum detection rate (min.pct) across both cell groups. To use this method,
+#'  please install DESeq2, using the instructions at
+#'  https://bioconductor.org/packages/release/bioc/html/DESeq2.html
+#' }
 #' @param return.thresh Only return markers that have a p-value < return.thresh, or a power > return.thresh (if the test is ROC)
-#' @param node FIXME
-#' @param max.cells.per.ident FIXME
-#' @param random.seed FIXME
-#' @param latent.vars FIXME
-#' @param min.cells.feature FIXME
-#' @param min.cells.group FIXME
-#' @param mean.fxn FIXME
+#' @param node A node to find markers for and all its children; requires
+#' \code{\link{BuildClusterTree}} to have been run previously; replaces \code{FindAllMarkersNode}
 #'
 #' @return Matrix containing a ranked list of putative markers, and associated
 #' statistics (p-values, ROC score, etc.)
@@ -171,12 +208,12 @@ FastFindAllMarkers64 <- function(
 # @examples
 # data("pbmc_small")
 # # Find markers for all clusters
-# all.markers <- FindAllMarkers(object = pbmc_small)
+# all.markers <- FastFindAllMarkers(object = pbmc_small)
 # head(x = all.markers)
 # \dontrun{
 # # Pass a value to node as a replacement for FindAllMarkersNode
 # pbmc_small <- BuildClusterTree(object = pbmc_small)
-# all.markers <- FindAllMarkers(object = pbmc_small, node = 4)
+# all.markers <- FastFindAllMarkers(object = pbmc_small, node = 4)
 # head(x = all.markers)
 # }
 #
@@ -192,13 +229,7 @@ FastFindAllMarkers <- function(
   node = NULL,
   verbose = FALSE,
   only.pos = FALSE,
-  max.cells.per.ident = Inf,
-  random.seed = 1,
-  latent.vars = NULL,
-  min.cells.feature = 3,
-  min.cells.group = 3,
   pseudocount.use = 1,
-  mean.fxn = NULL,
   fc.name = NULL,
   base = 2,
   return.thresh = 1e-2,
@@ -224,6 +255,7 @@ FastFindAllMarkers <- function(
     # genes.de dim = cluster as rows, genes as columns
     gde.all <- FastFindMarkers(
       object = object,
+      cells.lusters = idents.clusters,
       assay = assay,
       features = features,
       logfc.threshold = logfc.threshold,
@@ -283,13 +315,7 @@ FastFindAllMarkers <- function(
         node = node,
         verbose = verbose,
         only.pos = only.pos,
-        max.cells.per.ident = max.cells.per.ident,
-        random.seed = random.seed,
-        latent.vars = latent.vars,
-        min.cells.feature = min.cells.feature,
-        min.cells.group = min.cells.group,
         pseudocount.use = pseudocount.use,
-        mean.fxn = mean.fxn,
         fc.name = fc.name,
         base = base,
         return.thresh = return.thresh,
@@ -305,8 +331,8 @@ FastFindAllMarkers <- function(
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #' @rdname FastFindMarkers
-#' @param object  Seurat data, in sparse matrix of class dgCMatrix.  1 gene per row, 1 cell per col
-#' @param slot  FIXME
+#' @param slot Slot to pull data from; note that if \code{test.use} is "negbinom", "poisson", or "DESeq2",
+#' \code{slot} will be set to "counts"
 #' @param counts Count matrix if using scale.data for DE tests. This is used for
 #' computing pct.1 and pct.2 and for filtering features based on fraction
 #' expressing
@@ -317,10 +343,8 @@ FastFindAllMarkers <- function(
 #' Increasing logfc.threshold speeds up the function, but can miss weaker signals.
 #' @param test.use Denotes which test to use. Available options are:
 #' \itemize{
-#'  \item{"fastwmw"} : Identifies differentially expressed genes between two
-#'  groups of cells using a Wilcoxon Rank Sum test.  fast Wilcoxon test variant.
-#'  \item{"fast-t"} : Identifies differentially expressed genes between two
-#'  groups of cells using Student's t-test.  
+#'  \item{"fastwmw"} : sparse matrix based fast Wilcoxon Rank Sum test (default)
+#'  \item{"fast-t"} : sparse matrix based fast student's t-test
 #' }
 #' @param min.pct  only test genes that are detected in a minimum fraction of
 #' min.pct cells in either of the two populations. Meant to speed up the function
@@ -331,10 +355,14 @@ FastFindAllMarkers <- function(
 #' @param only.pos Only return positive markers (FALSE by default)
 #' @param pseudocount.use Pseudocount to add to averaged expression values when
 #' calculating logFC. 1 by default.
-#' @param fc.name FIXME
-#' @param base FIXME
-#' @param return.dataframe FIXME 
-#' @return returns a data frame with FIXME 
+#' @param fc.name Name of the fold change, average difference, or custom function column
+#' in the output data.frame. If NULL, the fold change column will be named
+#' according to the logarithm base (eg, "avg_log2FC"), or if using the scale.data
+#' slot "avg_diff".
+#' @param base The base with respect to which logarithms are computed.
+#' @param return.dataframe  if True, return a data frame instead of a matrix.
+#' 
+#' @return returns a data frame or a matrix of p-values. 
 #'
 #' @importFrom stats p.adjust
 #' @importFrom utils str
@@ -419,47 +447,6 @@ FastFindMarkers.default <- function(
   tictoc::toc()
   if (verbose) { print(fc_mask[1:20]) }
 
-
-  # print("TCP FASTDE: FastFindMarkers.default 1")
-  # # feature selection (based on percentages)
-  # alpha.min <- pmax(fc.results$pct.1, fc.results$pct.2)
-  # names(x = alpha.min) <- rownames(x = fc.results)
-  # features <- names(x = which(x = alpha.min >= min.pct))
-  # if (length(x = features) == 0) {
-  #   warning("No features pass min.pct threshold; returning empty data.frame")
-  #   return(fc.results[features, ])
-  # }
-
-  # print("TCP FASTDE: FastFindMarkers.default 2")
-  # alpha.diff <- alpha.min - pmin(fc.results$pct.1, fc.results$pct.2)
-  # features <- names(
-  #   x = which(x = alpha.min >= min.pct & alpha.diff >= min.diff.pct)
-  # )
-  # if (length(x = features) == 0) {
-  #   warning("No features pass min.diff.pct threshold; returning empty data.frame")
-  #   return(fc.results[features, ])
-  # }
-  # # feature selection (based on logFC)
-  # if (slot != "scale.data") {
-  #   total.diff <- fc.results[, 1] #first column is logFC
-  #   names(total.diff) <- rownames(fc.results)
-  #   features.diff <- if (only.pos) {
-  #     names(x = which(x = total.diff >= logfc.threshold))
-  #   } else {
-  #     names(x = which(x = abs(x = total.diff) >= logfc.threshold))
-  #   }
-  #   features <- intersect(x = features, y = features.diff)
-  #   if (length(x = features) == 0) {
-  #     warning("No features pass logfc.threshold threshold; returning empty data.frame")
-  #     return(fc.results[features, ])
-  #   }
-  # }
-  # # filter for positive entries of fc.name - DO IT  in fc_mask
-  # if (only.pos) {
-  #   # column 2 is same as fc.results first column, fc value.
-  #   de.results <- de.results[de.results[, fc.name] > 0, , drop = FALSE]
-  # }
-
   # NO subsample cell groups if they are too large
 
   if (verbose) { tictoc::toc() }
@@ -511,20 +498,34 @@ FastFindMarkers.default <- function(
 
 
 #' @rdname FastFindMarkers
-#' @param object FIXME
-#' @param slot FIXME
+#' @param slot Slot to pull data from; note that if \code{test.use} is "negbinom", "poisson", or "DESeq2",
+#' \code{slot} will be set to "counts"
 #' @param cells.clusters cell labels, integer cluster ids for each cell.
-#' @param features FIXME
-#' @param logfc.threshold FIXME
-#' @param test.use FIXME
-#' @param min.pct FIXME
-#' @param min.diff.pct FIXME
-#' @param verbose FIXME
-#' @param only.pos FIXME
-#' @param pseudocount.use FIXME
-#' @param fc.name FIXME
-#' @param base FIXmE
-#' @param return.dataframe FIXME
+#' @param features Genes to test. Default is to use all genes
+#' @param logfc.threshold Limit testing to genes which show, on average, at least
+#' X-fold difference (log-scale) between the two groups of cells. Default is 0.25
+#' Increasing logfc.threshold speeds up the function, but can miss weaker signals.
+#' @param test.use Denotes which test to use. Available options are:
+#' \itemize{
+#'  \item{"fastwmw"} : sparse matrix based fast Wilcoxon Rank Sum test (default)
+#'  \item{"fast-t"} : sparse matrix based fast student's t-test
+#' }
+
+#' @param min.pct  only test genes that are detected in a minimum fraction of
+#' min.pct cells in either of the two populations. Meant to speed up the function
+#' by not testing genes that are very infrequently expressed. Default is 0.1
+#' @param min.diff.pct  only test genes that show a minimum difference in the
+#' fraction of detection between the two groups. Set to -Inf by default
+#' @param only.pos Only return positive markers (FALSE by default)
+#' @param verbose Print a progress bar once expression testing begins
+#' @param pseudocount.use Pseudocount to add to averaged expression values when
+#' calculating logFC. 1 by default.
+#' @param fc.name Name of the fold change, average difference, or custom function column
+#' in the output data.frame. If NULL, the fold change column will be named
+#' according to the logarithm base (eg, "avg_log2FC"), or if using the scale.data
+#' slot "avg_diff".
+#' @param base The base with respect to which logarithms are computed.
+#' @param return.dataframe  if True, return a data frame instead of a matrix.
 #'
 #' @importFrom Seurat GetAssayData
 #' @importFrom Seurat Idents
@@ -595,14 +596,20 @@ FastFindMarkers.Assay <- function(
 }
 
 #' @rdname FastFindMarkers
-#' @param object  FIXME
 #' @param cells.clusters cell labels, integer cluster ids for each cell.
-#' @param features  FIXME
-#' @param test.use  FIXME
-#' @param verbose  FIXME
-#' @param only.pos  FIXME
-#' @param fc.name  FIXME
-#' @param return.dataframe  FIXME
+#' @param features Genes to test. Default is to use all genes
+#' @param test.use Denotes which test to use. Available options are:
+#' \itemize{
+#'  \item{"fastwmw"} : sparse matrix based fast Wilcoxon Rank Sum test (default)
+#'  \item{"fast-t"} : sparse matrix based fast student's t-test
+#' }
+#' @param only.pos Only return positive markers (FALSE by default)
+#' @param verbose Print a progress bar once expression testing begins
+#' @param fc.name Name of the fold change, average difference, or custom function column
+#' in the output data.frame. If NULL, the fold change column will be named
+#' according to the logarithm base (eg, "avg_log2FC"), or if using the scale.data
+#' slot "avg_diff".
+#' @param return.dataframe  if True, return a data frame instead of a matrix.
 #'
 #' @importFrom Seurat Embeddings
 #' @importFrom Seurat Idents
@@ -706,7 +713,6 @@ FastFindMarkers.DimReduc <- function(
 }
 
 #' @rdname FastFindMarkers
-#' @param object FIXME
 #' @param cells.clusters cell labels, integer cluster ids for each cell.
 #' @param group.by Regroup cells into a different identity class prior to performing differential expression (see example)
 #' @param subset.ident Subset a particular identity class prior to regrouping. Only relevant if group.by is set (see example)
@@ -714,20 +720,30 @@ FastFindMarkers.DimReduc <- function(
 #' @param slot Slot to pull data from; note that if \code{test.use} is "negbinom", "poisson", or "DESeq2",
 #' \code{slot} will be set to "counts"
 #' @param reduction Reduction to use in differential expression testing - will test for DE on cell embeddings
-#' @param features  FIXME
-#' @param logfc.threshold  FIXME
-#' @param test.use  FIXME
-#' @param min.pct   FIXME
-#' @param min.diff.pct  FIXME
-#' @param verbose  FIXME
-#' @param only.pos  FIXME
-#' @param pseudocount.use  FIXME
+#' @param features Genes to test. Default is to use all genes
+#' @param logfc.threshold Limit testing to genes which show, on average, at least
+#' X-fold difference (log-scale) between the two groups of cells. Default is 0.25
+#' Increasing logfc.threshold speeds up the function, but can miss weaker signals.
+#' @param test.use Denotes which test to use. Available options are:
+#' \itemize{
+#'  \item{"fastwmw"} : sparse matrix based fast Wilcoxon Rank Sum test (default)
+#'  \item{"fast-t"} : sparse matrix based fast student's t-test
+#' }
+#' @param min.pct  only test genes that are detected in a minimum fraction of
+#' min.pct cells in either of the two populations. Meant to speed up the function
+#' by not testing genes that are very infrequently expressed. Default is 0.1
+#' @param min.diff.pct  only test genes that show a minimum difference in the
+#' fraction of detection between the two groups. Set to -Inf by default
+#' @param only.pos Only return positive markers (FALSE by default)
+#' @param verbose Print a progress bar once expression testing begins
+#' @param pseudocount.use Pseudocount to add to averaged expression values when
+#' calculating logFC. 1 by default.
 #' @param fc.name Name of the fold change, average difference, or custom function column
 #' in the output data.frame. If NULL, the fold change column will be named
 #' according to the logarithm base (eg, "avg_log2FC"), or if using the scale.data
 #' slot "avg_diff".
 #' @param base The base with respect to which logarithms are computed.
-#' @param return.dataframe  FIXME
+#' @param return.dataframe  if True, return a data frame instead of a matrix.
 #'
 #' @importFrom Seurat DefaultAssay
 #' @importFrom Seurat Idents
@@ -821,7 +837,8 @@ FastFindMarkers.Seurat <- function(
 #' @param ... Arguments passed to other methods and to specific DE methods
 #'
 #' @return data.frame with a ranked list of putative markers as rows, and associated
-#' statistics as columns (p-values, ROC score, etc., depending on the test used (\code{test.use})). The following columns are always present:
+#' statistics as columns (p-values, ROC score, etc., depending on the test used 
+#'(\code{test.use})). The following columns are always present:
 #' \itemize{
 #'   \item \code{avg_logFC}: log fold-chage of the average expression between the two groups. Positive values indicate that the gene is more highly expressed in the first group
 #'   \item \code{pct.1}: The percentage of cells where the gene is detected in the first group

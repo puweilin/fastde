@@ -7,6 +7,7 @@ library(tictoc)
 #' 
 #' @rdname sp_transpose
 #' @param spmat a sparse matrix, of the form dgCMatrix
+#' @param threads number of threads for parallelization
 #' @return matrix dense matrix.
 #' @name sp_transpose
 #' @export
@@ -44,6 +45,7 @@ sp_transpose <- function(spmat, threads = 1) {
 #' 
 #' @rdname sp_to_dense
 #' @param spmat a sparse matrix, of the form dgCMatrix
+#' @param threads number of threads for parallelization
 #' @return matrix dense matrix.
 #' @name sp_to_dense
 #' @export
@@ -74,6 +76,7 @@ sp_to_dense <- function(spmat, threads = 1) {
 #' 
 #' @rdname sp_to_dense_transposed
 #' @param spmat a sparse matrix, of the form dgCMatrix
+#' @param threads number of threads for parallelization
 #' @return matrix dense matrix.
 #' @name sp_to_dense_transposed
 #' @export
@@ -103,6 +106,8 @@ sp_to_dense_transposed <- function(spmat, threads = 1) {
 #' 
 #' @rdname sp_rbind
 #' @param spmats a list of sparse matrice
+#' @param threads number of threads for parallelization
+#' @param method internal computation method.  use default=1
 #' @return a dgCMatrix64 object with the combined content.
 #' @name sp_rbind
 #' @export
@@ -148,13 +153,13 @@ sp_rbind <- function(spmats, threads = 1, method = 1) {
     tic("build output")
     if (is.integer(m[[3]])) {
         out <- new('dgCMatrix', x = m[[1]], i = m[[2]], p = m[[3]], 
-            Dim = c(m[[4]], m[[5]]))
+            Dim = c(m[[4]], m[[5]]),
+            Dimnames = list(nms, colnames(spmats[[1]])))
     } else {
         out <- new('dgCMatrix64', x = m[[1]], i = m[[2]], p = m[[3]], 
-            Dim = c(m[[4]], m[[5]]))
+            Dim = c(m[[4]], m[[5]]),
+            Dimnames = list(nms, colnames(spmats[[1]])))
     }
-    rownames(out) <- nms
-    colnames(out) <- colnames(spmats[[1]])
     toc()
 
     return(out)
@@ -167,7 +172,9 @@ sp_rbind <- function(spmats, threads = 1, method = 1) {
 #' This implementation allows production of very large sparse matrices.
 #' 
 #' @rdname sp_cbind
-#' @param spmats a list of sparse matrice
+#' @param spmats a list of sparse matrices
+#' @param threads number of threads for parallelization
+#' @param method internal computation method.  use default=1
 #' @return a dgCMatrix64 object with the combined content.
 #' @name sp_cbind
 #' @export
@@ -213,13 +220,13 @@ sp_cbind <- function(spmats, threads = 1, method = 1) {
     tic("create output")
     if (is.integer(m[[3]])) {
         out <- new('dgCMatrix', x = m[[1]], i = m[[2]], p = m[[3]], 
-            Dim = c(m[[4]], m[[5]]))
+            Dim = c(m[[4]], m[[5]]),
+            Dimnames = list(rownames(spmats[[1]]), nms))
     } else {
         out <- new('dgCMatrix64', x = m[[1]], i = m[[2]], p = m[[3]], 
-            Dim = c(m[[4]], m[[5]]))
+            Dim = c(m[[4]], m[[5]]),
+            Dimnames = list(rownames(spmats[[1]]), nms))
     }
-    rownames(out) <- rownames(spmats[[1]])
-    colnames(out) <- nms
     toc()
 
     return(out)
@@ -232,7 +239,9 @@ sp_cbind <- function(spmats, threads = 1, method = 1) {
 #' This implementation allows production of very large sparse matrices.
 #' 
 #' @rdname sp_rowSums
-#' @param spmats a list of sparse matrice
+#' @param spmat a sparse matrix
+#' @param threads number of threads for parallelization
+#' @param method internal computation method.  use default=1
 #' @return a dense array of row sums.
 #' @name sp_rowSums
 #' @export
@@ -260,7 +269,9 @@ sp_rowSums <- function(spmat, threads = 1, method = 1) {
 #' This implementation allows production of very large sparse matrices.
 #' 
 #' @rdname sp_rowSums
-#' @param spmats a list of sparse matrice
+#' @param spmat a list of sparse matrices
+#' @param threads number of threads for parallelization
+#' @param method internal computation method.  use default=1
 #' @return a dense array of row sums.
 #' @name sp_rowSums
 #' @export

@@ -4,12 +4,11 @@
 #' Differential expression using Wilcoxon Rank Sum, Sparse matrix.
 #'
 #' Identifies differentially expressed genes between two groups of cells using
-#' a Wilcoxon Rank Sum test. Makes use of limma::rankSumTestWithCorrelation for a
-#' more efficient implementation of the wilcoxon test. Thanks to Yunshun Chen and
-#' Gordon Smyth for suggesting the limma implementation.
+#' Wilcoxon Rank Sum test.
 #'
 #' @param data.use Data matrix to test.  rows = features, columns = samples
-#' @param cells.clusters cell labels, integer cluster ids for each cell.  array of size same as number of samples
+#' @param cells.clusters cell labels, integer cluster ids for each cell. 
+#' array of size same as number of samples
 #' @param features.as.rows controls transpose
 #' @param verbose Print report verbosely
 #' @param return.dataframe if TRUE, return a dataframe, else return a 2D matrix.
@@ -24,7 +23,7 @@
 # @examples
 # data("pbmc_small")
 # pbmc_small
-# WilcoxDETest(pbmc_small, cells.1 = WhichCells(object = pbmc_small, idents = 1),
+# FastSparseWilcoxDETest(pbmc_small, cells.1 = WhichCells(object = pbmc_small, idents = 1),
 #             cells.2 = WhichCells(object = pbmc_small, idents = 2))
 #
 FastSparseWilcoxDETest <- function(
@@ -61,25 +60,6 @@ FastSparseWilcoxDETest <- function(
   # two sided : 2
   # print(head(data.use))
   tictoc::tic("FastWilcoxDETest wmwfast")
-
-  # need to put features into columns.
-  # if (features.as.rows == TRUE) {
-  #   # slice and transpose
-  #   if (is(data.use, 'dgCMatrix64') )  {
-  #     dd <- fastde::sp_transpose(data.use)
-  #   } else {
-  #     dd <- fastde::sp_transpose(data.use)
-  #   }
-  # } else {
-  #   # slice the data
-  #   dd <- data.use
-  # }
-
-  # PerformDEFunc <- if (is(dd, 'dgCMatrix64') )  {
-  #   sparse64_wmw_fast
-  # } else {
-  #   sparse_wmw_fast
-  # }
 
   p_val <- sparse_wmw_fast(data.use, as.integer(cells.clusters),
           features.as.rows,
@@ -137,12 +117,13 @@ FastSparseWilcoxDETest <- function(
 #' Differential expression using Wilcoxon Rank Sum
 #'
 #' Identifies differentially expressed genes between two groups of cells using
-#' a Wilcoxon Rank Sum test. Makes use of limma::rankSumTestWithCorrelation for a
-#' more efficient implementation of the wilcoxon test. Thanks to Yunshun Chen and
-#' Gordon Smyth for suggesting the limma implementation.
+#' Wilcoxon Rank Sum test. This uses the sparse matrix Wilcoxon 
+#' Rank Sum test internally to realize speed up for dense matrices that has
+#' significant number of zeros.
 #'
 #' @param data.use Data matrix to test.  rows = features, columns = samples
-#' @param cells.clusters cell labels, integer cluster ids for each cell.  array of size same as number of samples
+#' @param cells.clusters cell labels, integer cluster ids for each cell.  
+#' array of size same as number of samples
 #' @param features.as.rows controls transpose
 #' @param verbose Print report verbosely
 #' @param return.dataframe if TRUE, return a dataframe, else return a 2D matrix.
@@ -157,7 +138,7 @@ FastSparseWilcoxDETest <- function(
 # @examples
 # data("pbmc_small")
 # pbmc_small
-# WilcoxDETest(pbmc_small, cells.1 = WhichCells(object = pbmc_small, idents = 1),
+# FastWilcoxDETest(pbmc_small, cells.1 = WhichCells(object = pbmc_small, idents = 1),
 #             cells.2 = WhichCells(object = pbmc_small, idents = 2))
 #
 FastWilcoxDETest <- function(

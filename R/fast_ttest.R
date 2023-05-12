@@ -3,12 +3,11 @@
 #' Differential expression using t-test, Sparse matrix.
 #'
 #' Identifies differentially expressed genes between two groups of cells using
-#' a Wilcoxon Rank Sum test. Makes use of limma::rankSumTestWithCorrelation for a
-#' more efficient implementation of the wilcoxon test. Thanks to Yunshun Chen and
-#' Gordon Smyth for suggesting the limma implementation.
+#' Student's T-test.
 #'
 #' @param data.use Data matrix to test.  rows = features, columns = samples
-#' @param cells.clusters cell labels, integer cluster ids for each cell.  array of size same as number of samples
+#' @param cells.clusters cell labels, integer cluster ids for each cell.  
+#' array of size same as number of samples
 #' @param features.as.rows controls transpose
 #' @param verbose Print report verbosely
 #' @param return.dataframe if TRUE, return a dataframe, else return a 2D matrix.
@@ -60,26 +59,6 @@ FastSparseDiffTTest <- function(
   # two sided : 2
   # print(head(data.use))
   tictoc::tic("FasTTestDETest fast_t")
-
-
-  # need to put features into columns.
-  # if (features.as.rows == TRUE) {
-  #   # slice and transpose
-  #   if (is(data.use, 'dgCMatrix64') )  {
-  #     dd <- fastde::sp_transpose(data.use)
-  #   } else {
-  #     dd <- fastde::sp_transpose(data.use)
-  #   }
-  # } else {
-  #   # slice the data
-  #   dd <- data.use
-  # }
-
-  # PerformDEFunc <- if (is(dd, 'dgCMatrix64') )  {
-  #   sparse64_ttest_fast
-  # } else {
-  #   sparse_ttest_fast
-  # }
 
   # default type is 2 (2 sided)
   p_val <- sparse_ttest_fast(data.use, as.integer(cells.clusters), features.as.rows,
@@ -133,15 +112,15 @@ FastSparseDiffTTest <- function(
 
 
 
-#' Differential expression using Wilcoxon Rank Sum
+#' Differential expression using Student's T-test
 #'
 #' Identifies differentially expressed genes between two groups of cells using
-#' a Wilcoxon Rank Sum test. Makes use of limma::rankSumTestWithCorrelation for a
-#' more efficient implementation of the wilcoxon test. Thanks to Yunshun Chen and
-#' Gordon Smyth for suggesting the limma implementation.
+#' student's t-test. This version uses the sparse matrix t-test algorithm internally
+#' and can realize speed up for dense matries that contain majority zeros
 #'
 #' @param data.use Data matrix to test.  rows = features, columns = samples
-#' @param cells.clusters cell labels, integer cluster ids for each cell.  array of size same as number of samples
+#' @param cells.clusters cell labels, integer cluster ids for each cell.  
+#' array of size same as number of samples
 #' @param features.as.rows controls transpose
 #' @param verbose Print report verbosely
 #' @param return.dataframe if TRUE, return a dataframe, else return a 2D matrix.

@@ -39,6 +39,7 @@ ttest_fast <- function(mat, labels,
 #' @rdname sparse_ttest_fast
 #' @param mat an expression matrix, COLUMN-MAJOR, each col is a feature, each row a sample
 #' @param labels an integer vector, each element indicating the group to which a sample belongs.
+#' @param features_as_rows Each row is a feature.  causes a matrix transpose.
 #' @param alternative 
 #' \itemize{
 #' \item{0} : p(two.sided)

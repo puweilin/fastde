@@ -41,6 +41,8 @@ wmw_fast <- function(mat, labels,
 #' @rdname sparse_wmw_fast
 #' @param mat an expression matrix, COLUMN-MAJOR, each col is a feature, each row a sample
 #' @param labels an integer vector, each element indicating the group to which a sample belongs.
+#' @param features_as_rows Each row is a feature.  causes a matrix transpose.
+#' @param features_as_rows Each row is a feature.  causes a matrix transpose.
 #' @param rtype 
 #' \itemize{
 #' \item{0} : p(less)
@@ -126,6 +128,7 @@ wmw_fastv <- function(mat, labels,
 #' @rdname sparse_wmw_fastv
 #' @param mat an expression matrix, COLUMN-MAJOR, each col is a feature, each row a sample
 #' @param labels an integer vector, each element indicating the group to which a sample belongs.
+#' @param features_as_rows Each row is a feature.  causes a matrix transpose.
 #' @param rtype 
 #' \itemize{
 #' \item{0} : p(less)

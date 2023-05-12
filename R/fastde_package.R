@@ -7,7 +7,6 @@
 #' @import tictoc 
 #' @import Seurat 
 #' @import Matrix 
-#' @import rhdf5 
 #' @import methods
 #' @import future
 #' @useDynLib fastde, .registration = TRUE

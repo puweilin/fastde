@@ -49,6 +49,7 @@ ComputeFoldChange <- function(mat, labels,
 #' @rdname ComputeFoldChangeSparse
 #' @param mat an expression matrix, COLUMN-MAJOR, each row is a sample, each column a gene
 #' @param labels an integer vector, each element indicating the group to which a sample belongs.
+#' @param features_as_rows indicates that each row is a feature.  causes a transpose.
 #' @param calc_percents  a boolean to indicate whether to compute percents or not.
 #' @param fc_name column name to use for the fold change results 
 #' @param use_expm1 for "data", use expm1

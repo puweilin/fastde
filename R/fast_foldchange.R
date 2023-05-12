@@ -1,4 +1,5 @@
 
+#' Compute Fold Change for sparse matrix.  This matches Seurat's function prototype
 #' @rdname FastFoldChange
 #' @param object Any object that's not a seurat
 #' @param cells.clusters cell labels, integer cluster ids for each cell.
@@ -110,6 +111,7 @@ FastFoldChange.default <- function(
   return(fc.results)
 }
 
+#' Compute Fold Change for sparse matrix.  This matches Seurat's function prototype
 #' @rdname FastFoldChange
 #' @param object A Seurat assay object
 #' @param cells.clusters cell labels, integer cluster ids for each cell.
@@ -176,6 +178,7 @@ FastFoldChange.Assay <- function(
   return(fc.results)
 }
 
+#' Compute Fold Change for sparse matrix.  This matches Seurat's function prototype
 #' @rdname FastFoldChange
 #' @param object A Seurat dim reduced object
 #' @param cells.clusters cell labels, integer cluster ids for each cell.
@@ -246,9 +249,9 @@ FastFoldChange.DimReduc <- function(
   return(fc.results)
 }
 
+#' Compute Fold Change for sparse matrix.  This matches Seurat's function prototype
 #' @rdname FastFoldChange
 #' 
-#' @param object A Seurat object
 #' @param cells.clusters cell labels, integer cluster ids for each cell.
 #' @param features Subset a particular features.
 #' @param group.by Regroup cells into a different identity class prior to
@@ -344,7 +347,7 @@ FastFoldChange.Seurat <- function(
   return(fc.results)
 }
 
-#' Fold Change
+#' Fast Fold Change
 #'
 #' Calculate log fold change and percentage of cells expressing each feature
 #' for different identity classes.
@@ -366,6 +369,7 @@ FastFoldChange.Seurat <- function(
 FastFoldChange <- function(object, ...) {
   UseMethod(generic = 'FastFoldChange', object = object)
 }
+
 
 FastPerformSparseFC <- function(data, clusters, 
   features_as_rows = FALSE,
