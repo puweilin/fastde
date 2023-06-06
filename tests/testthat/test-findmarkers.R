@@ -3,79 +3,66 @@
 
 source("../harness.R")
 
-test_that("findallmarkers", {
+test_that("findallmarkers_wilcox", {
 
   sobj = load_pbmc3k()
 
   f = paste0(get_data_dir(), "pbmc.seurat.Rdata")
   if (file.exists(f)) {
-    pbmc = load(f)
+    load(f)   # this replaces the variables of the same names in the workspace.
 
   } else {
+    # str(sobj)
     pbmc = seurat_pipeline(sobj)
 
     save(pbmc, file = f)
   }
+  # str(pbmc)
 
-  # seurat.markers <- Seurat::FindAllMarkers(pbmc, test.use = "wilcox", only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+  seurat.markers <- Seurat::FindAllMarkers(pbmc, test.use = "wilcox", verbose=FALSE, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
   # str(seurat.markers)
 
-  # fastde.markers <- fastde::FastFindAllMarkers(pbmc, test.use = "fastwmw", only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+  fastde.markers <- fastde::FastFindAllMarkers(pbmc, test.use = "fastwmw", verbose=FALSE, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
   # str(fastde.markers)
 
-  # expect_equal(fastde.markers, seurat.markers)
-
-  expect_equal(1, 1)
+  expect_equal(fastde.markers$cluster, seurat.markers$cluster)
+  expect_equal(fastde.markers$p_val, seurat.markers$p_val)
+  expect_equal(fastde.markers$avg_log2FC, seurat.markers$avg_log2FC)
+  expect_equal(fastde.markers$p_val_adj, seurat.markers$p_val_adj)
+  expect_equal(round(fastde.markers$pct.1, digits = 3), seurat.markers$pct.1)
+  expect_equal(round(fastde.markers$pct.2, digits = 3), seurat.markers$pct.2)
+  # expect_equal(fastde.markers$gene, seurat.markers$gene)
 })
 
 
+test_that("findallmarkers_ttest", {
 
-# test_that("findallmarkers_wilcox", {
+  sobj = load_pbmc3k()
 
-#   sobj <- load_pbmc3k()
-#   # str(sobj)
+  f = paste0(get_data_dir(), "pbmc.seurat.Rdata")
+  if (file.exists(f)) {
+    load(f)   # this replaces the variables of the same names in the workspace.
 
-#   # NOTE: cells in cols.
-#   spmat <- sobj@assays$RNA@counts
-#   genenames = spmat@Dimnames[1]
-#   str(genenames)
+  } else {
+    # str(sobj)
+    pbmc = seurat_pipeline(sobj)
 
-#   nclusters = 12  
-#   labels <- gen_labels(nclusters, ncol(spmat))
-#   L <- unique(sort(labels))
-#   sobj@meta.data$rand.ident <- as.factor(as.character(labels))
-#   Seurat::Idents(sobj) <- "rand.ident"
+    save(pbmc, file = f)
+  }
+  # str(pbmc)
 
-#   str(sobj)
-#   message("unique identities ", unique(Seurat::Idents(sobj)))
-  
-#   seurat_de <- Seurat::FindAllMarkers(sobj,
-#                                         test.use = 'wilcox',
-#                                         logfc.threshold = 0.25,
-#                                         min.pct = 0.1,
-#                                         min.diff.pct = -Inf,
-#                                         only.pos = FALSE,
-#                                         ma.cells.per.ident = Inf,
-#                                         min.cells.feature = 3,
-#                                         return.thresh = 0.01)
-#   print(seurat_de)
-#   message("number of rows ", nrow(seurat_de))
+  seurat.markers <- Seurat::FindAllMarkers(pbmc, test.use = "t", verbose=FALSE, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+  # str(seurat.markers)
 
-#   fastde_de <- fastde::FastFindAllMarkers(sobj, 
-#                                         test.use = 'fastwmw',
-#                                         logfc.threshold = 0.25,
-#                                         min.pct = 0.1,
-#                                         min.diff.pct = -Inf,
-#                                         only.pos = FALSE,
-#                                         ma.cells.per.ident = Inf,
-#                                         min.cells.feature = 3,
-#                                         return.thresh = 0.01)
+  fastde.markers <- fastde::FastFindAllMarkers(pbmc, test.use = "fast_t", verbose=FALSE, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+  # str(fastde.markers)
 
-#   message("number of rows ", nrow(fastde_de))
-#   # rownames(wilcox_de) <- wilcox_de$gene
-#   print(fastde_de)
-
-#   expect_equal(fastde_de$p_val, seurat_de$p_val)
-
-# })
+  expect_equal(fastde.markers$cluster, seurat.markers$cluster)
+  expect_equal(fastde.markers$p_val, seurat.markers$p_val)
+  expect_equal(fastde.markers$avg_log2FC, seurat.markers$avg_log2FC)
+  expect_equal(fastde.markers$p_val_adj, seurat.markers$p_val_adj)
+  expect_equal(round(fastde.markers$pct.1, digits = 3), seurat.markers$pct.1)
+  expect_equal(round(fastde.markers$pct.2, digits = 3), seurat.markers$pct.2)
+  # expect_equal(fastde.markers$gene, seurat.markers$gene)
+})
 

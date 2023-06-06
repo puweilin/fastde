@@ -1,0 +1,134 @@
+---
+title: "FastDE Large Sparse Matrix Support"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{FastDE Large Sparse Matrix Support}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+date: 'Compiled: `r format(Sys.Date(), "%B %d, %Y")`'
+---
+
+***
+
+```{r, include=FALSE}
+all_times <- list()  # store the time for each chunk
+knitr::knit_hooks$set(time_it = local({
+  now <- NULL
+  function(before, options) {
+    if (before) {
+      now <<- Sys.time()
+    } else {
+      res <- difftime(Sys.time(), now, units = "secs")
+      all_times[[options$label]] <<- res
+    }
+  }
+}))
+knitr::opts_chunk$set(
+  tidy = TRUE,
+  tidy.opts = list(width.cutoff = 95),
+  message = FALSE,
+  warning = FALSE,
+  time_it = TRUE,
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, eval = FALSE, echo = FALSE, results = 'hide'}
+library(fastde)
+library(Matrix)
+```
+
+# Handling Large Datasets
+R sparse matrix, `dgCMatrix`, has a limit of 2^31 or 2 billion non-zero elements.  A data set, such as 10X Genomics' mouse brain data set with 1.3 million cells, can exceed this limit.  FastDE defines a `dgCMatrix64` class for handling large sparse matrices.
+
+## Difference between dgCMatrix and dgCMatrix64
+Both dgCMatrix and dgCMatrix64 use compressed sparse column format, represented by 3 arrays: `x` for non-zero element values, `i` for row index of each non-zero element, and `p` for offsets of each column in the `x` an `i` arrays.  `x` is a doubles array, and `i` is an integers array, as is the `Dim` array containing the extents of the 2D sparse matrix.    The `p` array in dgCMatrix64 is of type doubles, in contrast to the integer array in `dgCMatrix`.   FastDE leverages IEEE double precision floating point definition to allow integers up to 2^53 in size to be represented exactly.  This is the same approach that R uses for representing large arrays and dense matrices.  However, this change prevents dgCMatrix64 from being used as a drop-in replacement of dgCMatrix.  dgCMatrix64 currently only matrices of up to 2^31 rows or columns.
+
+## Create a dgCMatrix64 object
+A dgCMatrix64 object can be created directly by providing the `x`, `i`, `p`, and `Dim` arrays during construction.  Alternatively, an R dgCMatrix can be converted to a dgCMatrix64 object using `as.dgCMatrix64` function.
+
+```{r create, fig.height=8, fig.width=15, eval = FALSE, echo = FALSE, results = 'hide'}
+# create dgCMatrix64
+spmat <- rsparsematrix(1000, 2000, 0.05)
+
+# direct construction
+spmat64 = new('dgCMatrix64', x = spmat@x, i = spmat@i, p = spmat@p, Dim = spmat@Dim, Dimnames = spmat@Dimnames)
+
+# via as function
+spmat64 <- as.dgCMatrix64(spmat)
+```
+
+## Read and write dgCMatrix64 object to files
+dgCMatrix64 can be serialized to and deserialized from HDF5 files with the provided functions `Write10X_h5` and `Read10X_h5` functions.  Both will adapt to data size automatically to accept or product `dgCMatrix` or `dgCMatrix64` objects. 
+
+```{r io, fig.height=8, fig.width=15, eval = FALSE, echo = FALSE, results = 'hide'}
+# write 
+fastde::Write10X_h5(spmat, "test_spmat.h5")
+
+# read
+spmat_2 = fastde::Read10X_h5("test_spmat.h5")
+
+# write 
+fastde::Write10X_h5(spmat64, "test_spmat64.h5")
+
+# read
+spmat64_2 = fastde::Read10X_h5("test_spmat64.h5")
+```
+
+## Supported Matrix operations
+FastDE provides a few basic matrix operations, specifically, conversion to dense matrix, transpose, compute row and column sums, and concatenate matrices.  All functions support a `threads` parameter for multithread support.  Again, all functions support both dgCMatrix and dgCMatrix64.  
+
+
+```{r ops, fig.height=8, fig.width=15, eval = FALSE, echo = FALSE, results = 'hide'}
+# convert to dense 
+mat64 = fastde::sp_to_dense(spmat64)
+
+# transpose
+spmat64_t = fastde::sp_transpose(spmat64)
+
+# create transposed dense matrix
+mat64_t = fastde::sp_to_dense_transposed(spmat64)
+
+# row and column sums
+rsums = fastde::sp_rowSums(spmat64, threads=4)
+csums = fastde::sp_colSums(spmat64, threads=4)
+
+# concatenate
+spmat64_rbind = fastde::sp_rbind(list(spmat, spmat, spmat))
+spmat64_cbind = fastde::sp_cbind(list(spmat, spmat, spmat))
+```
+
+
+## Using dgCMatrix64 for FastDE functionc
+Since Seurat object by default has slot for dgCMatrix but not dgCMatrix64, FastDE provides `FastFindAllMarkers64` for `dgCMatrix64` directly.  Compared to `FastFindAllMarker`, this function requires the cell labels to be supplied as an integer array.  `FastFindMarkers` function in FastDE natively supports `dgCMatrix64` and `dgCMatrix`.  Multithrading depends on the `future::plan` configuration.
+
+```{r findmarkers, include = FALSE, eval = FALSE, echo = FALSE, results = 'hide'}
+# 
+labels <- as.integer(sample(1:5, 2000, replace = TRUE))
+pbmc.markers <- FastFindAllMarkers64(spmat, idents.clusters = labels, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25, test.use = 'fastwmw', return.dataframe = TRUE)
+```
+
+The wilcoxon rank sum test and students t-test can also be invoked directly with either dense or sparse matrix as input.  Multithreading can be specified directly.
+
+```{r tests, include = FALSE, eval = FALSE, echo = FALSE, results = 'hide'}
+# student's t-test
+res <- fastde::sparse_ttest_fast(spmat, labels, as_dataframe = FALSE, threads = 4L, alternative = 2L, var_equal = FALSE)
+
+# wilcoxon rank sum test
+fastdewilcox <- fastde::sparse_wmw_fast(spmat, labels, rtype=2L, continuity_correction=TRUE, as_dataframe = FALSE, threads = 4L)
+
+# wilcoxon rank sum test on dense matrix
+fastdewilcox <- fastde::wmw_fast(mat, labels, rtype=2L, continuity_correction=TRUE, as_dataframe = FALSE, threads = 4L)
+```
+
+
+```{r save.times, include = FALSE, eval = FALSE, echo = FALSE, results = 'hide'}
+write.csv(x = t(as.data.frame(all_times)), file = "../output/timings/pbmc3k_tutorial_times.csv")
+```
+<details>
+  <summary>**Session Info**</summary>
+```{r}
+sessionInfo()
+```
+</details>

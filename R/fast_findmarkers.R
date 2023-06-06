@@ -255,7 +255,7 @@ FastFindAllMarkers <- function(
     # genes.de dim = cluster as rows, genes as columns
     gde.all <- FastFindMarkers(
       object = object,
-      cells.lusters = idents.clusters,
+      cells.clusters = idents.clusters,
       assay = assay,
       features = features,
       logfc.threshold = logfc.threshold,

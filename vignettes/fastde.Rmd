@@ -1,0 +1,107 @@
+---
+title: "Using FastDE for Differential Gene Expression Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using FastDE for Differential Gene Expression Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+date: 'Compiled: `r format(Sys.Date(), "%B %d, %Y")`'
+---
+
+***
+
+```{r, include=FALSE}
+all_times <- list()  # store the time for each chunk
+knitr::knit_hooks$set(time_it = local({
+  now <- NULL
+  function(before, options) {
+    if (before) {
+      now <<- Sys.time()
+    } else {
+      res <- difftime(Sys.time(), now, units = "secs")
+      all_times[[options$label]] <<- res
+    }
+  }
+}))
+knitr::opts_chunk$set(
+  tidy = TRUE,
+  tidy.opts = list(width.cutoff = 95),
+  message = FALSE,
+  warning = FALSE,
+  time_it = TRUE,
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(fastde)
+```
+
+
+# Setup the Seurat Pipeline
+
+For this tutorial, we will follow the Seurat - Guided Clustering Tutorial found [here](https://satijalab.org/seurat/articles/pbmc3k_tutorial.html), but using FastDE for the differential gene expression step.  The data set used, a 2,700 cell Peripheral Blood Mononuclear Cells (PBMC) freely available from 10X Genomics, can be downloaded [here](https://cf.10xgenomics.com/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz).
+
+The basic pipeline outlined in the Seurat tutorial is shown below: 
+
+
+```{r seurat_pipe, eval = FALSE, echo = FALSE, results = 'hide'}
+library(dplyr)
+library(Seurat)
+library(patchwork)
+
+# Load the PBMC dataset
+pbmc.data <- Read10X(data.dir = "data/pbmc3k/")
+# Initialize the Seurat object with the raw (non-normalized data).
+pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
+# Normalize data
+pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
+# Identify highly variable features
+pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+# Scale the data
+all.genes <- rownames(pbmc)
+pbmc <- ScaleData(pbmc, features = all.genes)
+# Perform linear dimensionality reduction
+pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+# Cluster the cells
+pbmc <- FindNeighbors(pbmc, dims = 1:10)
+pbmc <- FindClusters(pbmc, resolution = 0.5)
+# Run non-linear dimensionality reduction
+pbmc <- RunUMAP(pbmc, dims = 1:10)
+# Save the results so far
+saveRDS(pbmc, file = "pbmc_tutorial.rds")
+```
+
+***
+# Finding differentially expressed features with FastDE
+Seurat provides `FindMarkers()` and `FindAllMarkers()` for finding marker genes for each cluster.  FastDE provides equivalent functions named `FastFindMarkers()` and `FastFindAllMarkers()` that are high performance and parallelized.  New `test.use` options `fastwmw` and `fast-t` have been defined: `fastwmw` for an optimized Wilcoxon Rank Sum Test implementation as default, and `fast-t` for an optimized Student's t-test implementation. 
+
+The `FastFindMarkers()` function in FastDE performs differential expression of each cluster vs all others in a single pass, and therefore requires the cells' cluster labels to be used directly.  Whereas `ident.1` specifies the target cluster in Seurat's `FindMarkers()`, the labels of all clusters can be specified via `cells.clusters` can be specified in `FastFindMarkers()`.  If `cells.clusters` is not specified, the active ident labels in the Seurat object is used by default.  Since the differentially expressed genes are found for all clusters, either a matrix or a dataframe can be returned.  FastDE at the moment does not perform differential expression analysis between 2 clusters.  Since `FastFindMarkers()` already computes differentially expressed genes for each cluster, `FastFindAllMarkers()` is essentially a wrapper.
+
+```{r markers1, fig.height=8, fig.width=15, eval = FALSE, echo = FALSE, results = 'hide'}
+# find markers for every cluster compared to all remaining cells, report only the positive ones
+pbmc.markers <- FastFindAllMarkers(pbmc, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25, test.use = 'fastwmw', return.dataframe = TRUE)
+pbmc.markers %>% group_by(cluster) %>% slice_max(n = 2, order_by = avg_log2FC)
+```
+
+`FastFindAllMarkers64` function is available for For large sparse matrices, as are lower level wilcoxon rank sum test and student's t-test functions.  Please see the "large_sparse_matrix" vignette.
+
+
+Once the differentially expressed genes have been found, Seurat visualizations tools can be used, e.g. `VlnPlot()` and `FeaturePlot()`.
+The cells types can also be assigned to clusters following the suggested process from the Seurat Guided Clustering Tutorial.
+
+***
+
+
+
+
+```{r save.times, include = FALSE, eval = FALSE, echo = FALSE, results = 'hide'}
+write.csv(x = t(as.data.frame(all_times)), file = "../output/timings/pbmc3k_tutorial_times.csv")
+```
+<details>
+  <summary>**Session Info**</summary>
+```{r}
+sessionInfo()
+```
+</details>

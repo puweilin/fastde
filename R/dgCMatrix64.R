@@ -5,6 +5,9 @@
 ## signature of generic methods.  see 
 ## https://stackoverflow.com/questions/7356120/how-to-properly-document-s4-methods-using-roxygen2
 
+# do not include @name in the distached methos
+# https://github.com/r-lib/roxygen2/issues/695
+
 
 #' Based on dgCMatrix class (definitions.R) to support compressed sparse column matrice with
 #' up to 2^53 non-zero entries.   R's dgCMatrix allows 2^31 or 2 billion non-zero elements.
@@ -79,7 +82,6 @@ is.dgCMatrix64 <- function(obj)
     is(obj, "dgCMatrix64")
 
 # #' @exportMethod = as.dgCMatrix64
-#' Generic, NOT IMPLEMENTED:  convert an object to a dgCMatrix64 object.
 #' @name as.dgCMatrix64
 #' @docType methods
 #' @param obj an object
@@ -92,13 +94,12 @@ as.dgCMatrix64 <- function(obj, eps = .Machine$double.eps)
 
 # # ' convert a dgCMatrix64 object to another dgCMatrix64 object.
 
-#' 
 #' @docType methods
-#' @name as.dgCMatrix64
 #' @rdname as.dgCMatrix64-methods
 #' @param obj a dgcMatrix64 object
 #' @param eps value type conversion tolerance, unused
 #' @return a dgCMatrix64 object
+#' @aliases as.dgCMatrix64,dgCMatrix64,ANY-method
 #' @export
 #' @method as.dgCMatrix64 dgCMatrix64
 as.dgCMatrix64.dgCMatrix64 <- function(obj, eps = .Machine$double.eps)  {
@@ -110,12 +111,12 @@ as.dgCMatrix64.dgCMatrix64 <- function(obj, eps = .Machine$double.eps)  {
 #' convert a dgCMatrix object to another dgCMatrix64 object.
 #' 
 #' @docType methods
-#' @name as.dgCMatrix64
 #' @param obj a dgcMatrix64 object
 #' @param eps value type conversion tolerance, unused
 #' @return a dgCMatrix64 object 
 #' @method as.dgCMatrix64 dgCMatrix
 #' @rdname as.dgCMatrix64-methods
+#' @aliases as.dgCMatrix64,dgCMatrix,ANY-method
 #' @export
 as.dgCMatrix64.dgCMatrix <- function(obj, eps = .Machine$double.eps)  {
     newobj <- new("dgCMatrix64", x = obj@x, i = obj@i, p = obj@p,
@@ -143,7 +144,6 @@ setGeneric("as.dgCMatrix64", as.dgCMatrix64)
 #' @param obj object to be converted to dgCMatrix64
 #' @param eps error tolerance for data type conversion.  unused.
 #' @return dgCMatrix64 sparse matrix
-#' @name as.dgCMatrix64
 #' @docType methods
 #' @aliases as.dgCMatrix64,dgCMatrix64,ANY-method
 #' @rdname as.dgCMatrix64-methods
@@ -157,7 +157,6 @@ setMethod("as.dgCMatrix64", "dgCMatrix64", as.dgCMatrix64.dgCMatrix64)
 #' @param obj object to be converted to dgCMatrix64
 #' @param eps error tolerance for data type conversion.  unused.
 #' @return dgCMatrix64 sparse matrix
-#' @name as.dgCMatrix64
 #' @docType methods
 #' @aliases as.dgCMatrix64,dgCMatrix,ANY-method
 #' @rdname as.dgCMatrix64-methods

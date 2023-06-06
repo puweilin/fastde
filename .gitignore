@@ -48,3 +48,4 @@ src/*.rds
 .vscode
 
 tests/data/*.Rdata
+inst/doc

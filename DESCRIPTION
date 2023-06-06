@@ -16,12 +16,14 @@ Imports:
         future
 LinkingTo: cpp11
 Remotes: 
-        github::tcpan/cpp11,
         github::satijalab/seurat-data
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Encoding: UTF-8
-SystemRequirements: C++11
+SystemRequirements:
 Suggests: 
     testthat (>= 3.0.0),
-    SeuratData
+    SeuratData,
+    knitr,
+    rmarkdown
 Config/testthat/edition: 3
+VignetteBuilder: knitr
