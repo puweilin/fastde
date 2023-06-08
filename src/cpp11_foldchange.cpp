@@ -251,7 +251,7 @@ extern cpp11::writable::logicals cpp11_FilterFoldChange(
     // ----------- copy to local
     // ---- input matrix
 
-    size_t nelem = fc.size();
+    R_xlen_t nelem = fc.size();
 
   double * _fc = reinterpret_cast<double *>(malloc(nelem * sizeof(double)));
   double * _pct1 = reinterpret_cast<double *>(malloc(nelem * sizeof(double)));

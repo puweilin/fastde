@@ -96,7 +96,7 @@ extern cpp11::sexp cpp11_dense_wmw_vec(
   // ---- input matrix
   int nsamples = input.nrow();
   int nfeatures = input.ncol();
-  size_t nelem = nsamples * nfeatures;
+  // size_t nelem = nsamples * nfeatures;
 
 
   // Rprintf("malloc for mat : %dx%d %ld :  %x\n", nsamples, nfeatures, nelem, mat);

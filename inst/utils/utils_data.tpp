@@ -232,8 +232,8 @@ cpp11::writable::data_frame export_vec_to_r_dataframe(
 ) {
     // https://stackoverflow.com/questions/23547625/returning-a-data-frame-from-c-to-r
 
-    size_t label_count = sorted_labels.size();
-    size_t nfeatures = el_count / label_count;
+    // size_t label_count = sorted_labels.size();
+    // size_t nfeatures = el_count / label_count;
     
     // data frame has 3 columns:  cluster id, gene names, pvalue.
     
@@ -288,8 +288,8 @@ cpp11::writable::data_frame export_fc_to_r_dataframe(
     cpp11::strings const & features
 ) {
     // https://stackoverflow.com/questions/23547625/returning-a-data-frame-from-c-to-r
-    size_t label_count = sorted_labels.size();
-    size_t nfeatures = el_count / label_count;
+    // size_t label_count = sorted_labels.size();
+    // size_t nfeatures = el_count / label_count;
     
     // data frame has 3 columns:  cluster id, gene names, pvalue.
     
