@@ -1,28 +1,6 @@
 library(tictoc)
 library(Seurat)
-
-# comparemat <- function(name, A, B) {
-#     diff <- A - B
-#     maxdiff <- max(diff)
-#     mindiff <- min(diff)
-#     mediandiff <- median(diff)
-#     meandiff <- mean(diff * diff)
-#     stdevdiff <- sd(diff * diff)
-#     cat(sprintf("%s : diff range [%.17g, %.17g], median %.17g, mean %.17g, sd %.17g\n", 
-#         name, mindiff, maxdiff, mediandiff, meandiff, stdevdiff))
-
-#         # mxpos = which(diff == maxdiff, arr.ind = TRUE)
-#     # mnpos = which(diff == mindiff, arr.ind = TRUE)
-
-#     # if ( abs(maxdiff) > .Machine$double.eps)
-#     #    cat(sprintf("%s : max diff at pos %d:  A %.17g - B %.17g = DIFF %.17g.\n", 
-#     #         name, mxpos, A[mxpos], B[mxpos], diff[mxpos]))
-#     # if  ( abs(mindiff) > .Machine$double.eps)
-#     #     cat(sprintf("%s : min diff at pos %d:  A %.17g - B %.17g = DIFF %.17g.\n", 
-#     #         name, mnpos, A[mnpos], B[mnpos], diff[mnpos]))
-    
-# }
-
+library(SeuratData)
 
 print_mat <- function(mat, count) {
     print(head(mat, n = count)[, 1:count])
@@ -60,12 +38,12 @@ load_pbmc3k <- function() {
     pbmc.data <- Seurat::Read10X(data.dir = paste0(datadir, dataset))
     # Initialize the Seurat object with the raw (non-normalized data).
     pbmc <- Seurat::CreateSeuratObject(counts = pbmc.data, project = dataset, min.cells = 3, min.features = 200)
+    return(pbmc)
 
     # SeuratData::InstallData("pbmc3k")
-    # data("pbmc3k.final")
-    # return(pbmc3k.final)
+    # data("pbmc3k")
+    # return(pbmc3k)
 
-    return(pbmc)
 }
 
 #' @import Seurat

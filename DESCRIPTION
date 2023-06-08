@@ -15,8 +15,6 @@ Imports:
         hdf5r,
         future
 LinkingTo: cpp11
-Remotes: 
-        github::satijalab/seurat-data
 RoxygenNote: 7.2.3
 Encoding: UTF-8
 SystemRequirements:
