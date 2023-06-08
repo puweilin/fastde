@@ -265,16 +265,21 @@ extern cpp11::writable::list cpp11_sp_rbind(
         size_t test_nz = 0;
         int test_col = 0;
         for (int i = 0; i < n_vecs; ++i) {
+            // TODO: simplify after cpp11 v 0.4.4
+            cpp11::doubles xv_in = cpp11::as_doubles(xvecs.at(i));
+            cpp11::integers iv_in = cpp11::as_integers(ivecs.at(i));
+            cpp11::integers pv_in = cpp11::as_integers(pvecs.at(i));
+
             test_col = ncols[i];
-            test_nz = pvecs[i][test_col];
+            test_nz = pv_in[test_col];
 
             equal_cols &= (ncol == test_col); // bad input.
             nrow += nrows[i];
             nz += test_nz;
 
-            xsv[i].resize(test_nz);         std::copy(xvecs[i].cbegin(), xvecs[i].cend(), xsv[i].begin());
-            isv[i].resize(test_nz);         std::copy(ivecs[i].cbegin(), ivecs[i].cend(), isv[i].begin());
-            psv[i].resize(test_col + 1);    std::copy(pvecs[i].cbegin(), pvecs[i].cend(), psv[i].begin());
+            xsv[i].resize(test_nz);         std::copy(xv_in.cbegin(), xv_in.cend(), xsv[i].begin());
+            isv[i].resize(test_nz);         std::copy(iv_in.cbegin(), iv_in.cend(), isv[i].begin());
+            psv[i].resize(test_col + 1);    std::copy(pv_in.cbegin(), pv_in.cend(), psv[i].begin());
 
             xs.emplace_back(xsv[i].cbegin());
             is.emplace_back(isv[i].cbegin());
@@ -314,11 +319,20 @@ extern cpp11::writable::list cpp11_sp_rbind(
         return out;
     } else if (method == 1) {
 // -----------------
-
+        // for cpp11 v 0.4.3 or earlier.
+        std::vector<cpp11::doubles> xv_in(n_vecs);
+        std::vector<cpp11::integers> iv_in(n_vecs);
+        std::vector<cpp11::integers> pv_in(n_vecs);
+        
         for (int i = 0; i < n_vecs; ++i) {
+            xv_in[i] = cpp11::as_doubles(xvecs.at(i));
+            iv_in[i] = cpp11::as_integers(ivecs.at(i));
+            pv_in[i] = cpp11::as_integers(pvecs.at(i));
+
             equal_cols &= (ncol == ncols[i]); // bad input.
             nrow += nrows[i];
-            nz += pvecs[i][ncols[i]];
+            nz += pv_in[i][ncols[i]];
+
         }
         if (! equal_cols) return out;
 
@@ -327,7 +341,7 @@ extern cpp11::writable::list cpp11_sp_rbind(
 
         if (nz >= __INT_MAX__) {
             cpp11::writable::doubles pv(ncol + 1);
-            csc_rbind_vec(xvecs, ivecs, pvecs, nrows, ncols,  xv, iv, pv, threads);
+            csc_rbind_vec(xv_in, iv_in, pv_in, nrows, ncols,  xv, iv, pv, threads);
             // create output.
             out.push_back(xv);
             out.push_back(iv);
@@ -337,7 +351,7 @@ extern cpp11::writable::list cpp11_sp_rbind(
             
         } else {
             cpp11::writable::integers pv(ncol + 1);
-            csc_rbind_vec(xvecs, ivecs, pvecs, nrows, ncols,  xv, iv, pv, threads);
+            csc_rbind_vec(xv_in, iv_in, pv_in, nrows, ncols,  xv, iv, pv, threads);
             // create output.
             out.push_back(xv);
             out.push_back(iv);
@@ -349,24 +363,24 @@ extern cpp11::writable::list cpp11_sp_rbind(
         return out;
     } else if (method == 2) {
 // -----------------
-        // copy input to cpp
-        // std::vector<std::vector<double>> xsv(n_vecs);
-        // std::vector<std::vector<int>> isv(n_vecs);
-        // std::vector<std::vector<int>> psv(n_vecs);
-
+        // for cpp11 v 0.4.3 or earlier.
+        std::vector<cpp11::doubles> xv_in(n_vecs);
+        std::vector<cpp11::integers> iv_in(n_vecs);
+        std::vector<cpp11::integers> pv_in(n_vecs);
+        
         size_t test_nz = 0;
         int test_col = 0;
         for (int i = 0; i < n_vecs; ++i) {
+            xv_in[i] = cpp11::as_doubles(xvecs.at(i));
+            iv_in[i] = cpp11::as_integers(ivecs.at(i));
+            pv_in[i] = cpp11::as_integers(pvecs.at(i));
+
             test_col = ncols[i];
-            test_nz = pvecs[i][test_col];
+            test_nz = pv_in[i][test_col];
 
             equal_cols &= (ncol == test_col); // bad input.
             nrow += nrows[i];
             nz += test_nz;
-
-            // xsv[i].resize(test_nz);         std::copy(xvecs[i].cbegin(), xvecs[i].cend(), xsv[i].begin());
-            // isv[i].resize(test_nz);         std::copy(ivecs[i].cbegin(), ivecs[i].cend(), isv[i].begin());
-            // psv[i].resize(test_col + 1);    std::copy(pvecs[i].cbegin(), pvecs[i].cend(), psv[i].begin());
 
         }
         if (! equal_cols) return out;
@@ -378,7 +392,7 @@ extern cpp11::writable::list cpp11_sp_rbind(
             std::vector<int> oiv(nz);
             std::vector<double> opv(ncol + 1);
 
-            csc_rbind_vec(xvecs, ivecs, pvecs, nrows, ncols,  oxv, oiv, opv, threads);
+            csc_rbind_vec(xv_in, iv_in, pv_in, nrows, ncols,  oxv, oiv, opv, threads);
 
             cpp11::writable::doubles xv(oxv.cbegin(), oxv.cend());
             cpp11::writable::integers iv(oiv.cbegin(), oiv.cend());
@@ -397,7 +411,7 @@ extern cpp11::writable::list cpp11_sp_rbind(
             std::vector<int> oiv(nz);
             std::vector<int> opv(ncol + 1);
 
-            csc_rbind_vec(xvecs, ivecs, pvecs, nrows, ncols, oxv, oiv, opv, threads);
+            csc_rbind_vec(xv_in, iv_in, pv_in, nrows, ncols, oxv, oiv, opv, threads);
 
             // check
             Rprintf("i0: %d, i1 %d, i2 %d\n", oiv[0], oiv[1], oiv[2]);
@@ -466,16 +480,20 @@ extern cpp11::writable::list cpp11_sp64_rbind(
         size_t test_nz = 0;
         int test_col = 0;
         for (int i = 0; i < n_vecs; ++i) {
+            cpp11::doubles xv_in = cpp11::as_doubles(xvecs.at(i));
+            cpp11::integers iv_in = cpp11::as_integers(ivecs.at(i));
+            cpp11::doubles pv_in = cpp11::as_doubles(pvecs.at(i));
+
             test_col = ncols[i];
-            test_nz = pvecs[i][test_col];
+            test_nz = pv_in[test_col];
 
             equal_cols &= (ncol == test_col); // bad input.
             nrow += nrows[i];
             nz += test_nz;
 
-            xsv[i].resize(test_nz);         std::copy(xvecs[i].cbegin(), xvecs[i].cend(), xsv[i].begin());
-            isv[i].resize(test_nz);         std::copy(ivecs[i].cbegin(), ivecs[i].cend(), isv[i].begin());
-            psv[i].resize(test_col + 1);    std::copy(pvecs[i].cbegin(), pvecs[i].cend(), psv[i].begin());
+            xsv[i].resize(test_nz);         std::copy(xv_in.cbegin(), xv_in.cend(), xsv[i].begin());
+            isv[i].resize(test_nz);         std::copy(iv_in.cbegin(), iv_in.cend(), isv[i].begin());
+            psv[i].resize(test_col + 1);    std::copy(pv_in.cbegin(), pv_in.cend(), psv[i].begin());
 
             xs.emplace_back(xsv[i].cbegin());
             is.emplace_back(isv[i].cbegin());
@@ -503,11 +521,20 @@ extern cpp11::writable::list cpp11_sp64_rbind(
         return out;
     } else if (method == 1) {
 //------------------
+        // for cpp11 v 0.4.3 or earlier.
+        std::vector<cpp11::doubles> xv_in(n_vecs);
+        std::vector<cpp11::integers> iv_in(n_vecs);
+        std::vector<cpp11::doubles> pv_in(n_vecs);
+        
 
         for (int i = 0; i < n_vecs; ++i) {
+            xv_in[i] = cpp11::as_doubles(xvecs.at(i));
+            iv_in[i] = cpp11::as_integers(ivecs.at(i));
+            pv_in[i] = cpp11::as_doubles(pvecs.at(i));
+            
             equal_cols &= (ncol == ncols[i]); // bad input.
             nrow += nrows[i];
-            nz += pvecs[i][ncols[i]];
+            nz += pv_in[i][ncols[i]];
 
         }
         if (! equal_cols) return out;
@@ -516,7 +543,7 @@ extern cpp11::writable::list cpp11_sp64_rbind(
         cpp11::writable::integers iv(nz);
 
         cpp11::writable::doubles pv(ncol + 1);
-        csc_rbind_vec(xvecs, ivecs, pvecs, nrows, ncols, xv, iv, pv, threads);
+        csc_rbind_vec(xv_in, iv_in, pv_in, nrows, ncols, xv, iv, pv, threads);
         // create output.
         out.push_back(xv);
         out.push_back(iv);
@@ -569,16 +596,20 @@ extern cpp11::writable::list cpp11_sp_cbind(
         size_t test_nz = 0;
         int test_col = 0;
         for (int i = 0; i < n_vecs; ++i) {
+            cpp11::doubles xv_in = cpp11::as_doubles(xvecs.at(i));
+            cpp11::integers iv_in = cpp11::as_integers(ivecs.at(i));
+            cpp11::integers pv_in = cpp11::as_integers(pvecs.at(i));
+
             test_col = ncols[i];
-            test_nz = pvecs[i][test_col];
+            test_nz = pv_in[test_col];
 
             equal_rows &= (nrow == nrows[i]); // bad input.
             ncol += test_col;
             nz += test_nz;
 
-            xsv[i].resize(test_nz);         std::copy(xvecs[i].cbegin(), xvecs[i].cend(), xsv[i].begin());
-            isv[i].resize(test_nz);         std::copy(ivecs[i].cbegin(), ivecs[i].cend(), isv[i].begin());
-            psv[i].resize(test_col + 1);    std::copy(pvecs[i].cbegin(), pvecs[i].cend(), psv[i].begin());
+            xsv[i].resize(test_nz);         std::copy(xv_in.cbegin(), xv_in.cend(), xsv[i].begin());
+            isv[i].resize(test_nz);         std::copy(iv_in.cbegin(), iv_in.cend(), isv[i].begin());
+            psv[i].resize(test_col + 1);    std::copy(pv_in.cbegin(), pv_in.cend(), psv[i].begin());
 
             xs.emplace_back(xsv[i].cbegin());
             is.emplace_back(isv[i].cbegin());
@@ -617,10 +648,20 @@ extern cpp11::writable::list cpp11_sp_cbind(
         return out;
     } else if (method == 1) {
 //--------------
+        // for cpp11 v 0.4.3 or earlier.
+        std::vector<cpp11::doubles> xv_in(n_vecs);
+        std::vector<cpp11::integers> iv_in(n_vecs);
+        std::vector<cpp11::integers> pv_in(n_vecs);
+        
+
         for (int i = 0; i < n_vecs; ++i) {
+            xv_in[i] = cpp11::as_doubles(xvecs.at(i));
+            iv_in[i] = cpp11::as_integers(ivecs.at(i));
+            pv_in[i] = cpp11::as_integers(pvecs.at(i));
+
             equal_rows &= (nrow == nrows[i]); // bad input.
             ncol += ncols[i];
-            nz += pvecs[i][ncols[i]];
+            nz += pv_in[i][ncols[i]];
 
         }
         if (! equal_rows) return out;
@@ -630,7 +671,7 @@ extern cpp11::writable::list cpp11_sp_cbind(
 
         if (nz >= __INT_MAX__) {
             cpp11::writable::doubles pv(ncol + 1);
-            csc_cbind_vec(xvecs, ivecs, pvecs, nrows, ncols, xv, iv, pv, threads);
+            csc_cbind_vec(xv_in, iv_in, pv_in, nrows, ncols, xv, iv, pv, threads);
             // create output.
             out.push_back(xv);
             out.push_back(iv);
@@ -640,7 +681,7 @@ extern cpp11::writable::list cpp11_sp_cbind(
             
         } else {
             cpp11::writable::integers pv(ncol + 1);
-            csc_cbind_vec(xvecs, ivecs, pvecs, nrows, ncols, xv, iv, pv, threads);
+            csc_cbind_vec(xv_in, iv_in, pv_in, nrows, ncols, xv, iv, pv, threads);
             // create output.
             out.push_back(xv);
             out.push_back(iv);
@@ -693,16 +734,22 @@ extern cpp11::writable::list cpp11_sp64_cbind(
         size_t test_nz = 0;
         int test_col = 0;
         for (int i = 0; i < n_vecs; ++i) {
+
+            cpp11::doubles xv_in = cpp11::as_doubles(xvecs.at(i));
+            cpp11::integers iv_in = cpp11::as_integers(ivecs.at(i));
+            cpp11::doubles pv_in = cpp11::as_doubles(pvecs.at(i));
+
+
             test_col = ncols[i];
-            test_nz = pvecs[i][test_col];
+            test_nz = pv_in[test_col];
 
             equal_rows &= (nrow == nrows[i]); // bad input.
             ncol += test_col;
             nz += test_nz;
 
-            xsv[i].resize(test_nz);         std::copy(xvecs[i].cbegin(), xvecs[i].cend(), xsv[i].begin());
-            isv[i].resize(test_nz);         std::copy(ivecs[i].cbegin(), ivecs[i].cend(), isv[i].begin());
-            psv[i].resize(test_col + 1);    std::copy(pvecs[i].cbegin(), pvecs[i].cend(), psv[i].begin());
+            xsv[i].resize(test_nz);         std::copy(xv_in.cbegin(), xv_in.cend(), xsv[i].begin());
+            isv[i].resize(test_nz);         std::copy(iv_in.cbegin(), iv_in.cend(), isv[i].begin());
+            psv[i].resize(test_col + 1);    std::copy(pv_in.cbegin(), pv_in.cend(), psv[i].begin());
 
             xs.emplace_back(xsv[i].cbegin());
             is.emplace_back(isv[i].cbegin());
@@ -729,11 +776,20 @@ extern cpp11::writable::list cpp11_sp64_cbind(
 
         return out;
     } else if (method == 1) {
+        // for cpp11 v 0.4.3 or earlier.
+        std::vector<cpp11::doubles> xv_in(n_vecs);
+        std::vector<cpp11::integers> iv_in(n_vecs);
+        std::vector<cpp11::doubles> pv_in(n_vecs);
+        
 
         for (int i = 0; i < n_vecs; ++i) {
+            xv_in[i] = cpp11::as_doubles(xvecs.at(i));
+            iv_in[i] = cpp11::as_integers(ivecs.at(i));
+            pv_in[i] = cpp11::as_doubles(pvecs.at(i));
+
             equal_rows &= (nrow == nrows[i]); // bad input.
             ncol += ncols[i];
-            nz += pvecs[i][ncols[i]];
+            nz += pv_in[i][ncols[i]];
         }
         if (! equal_rows) return out;
 
@@ -741,7 +797,7 @@ extern cpp11::writable::list cpp11_sp64_cbind(
         cpp11::writable::integers iv(nz);
 
         cpp11::writable::doubles pv(ncol + 1);
-        csc_cbind_vec(xvecs, ivecs, pvecs, nrows, ncols, xv, iv, pv, threads);
+        csc_cbind_vec(xv_in, iv_in, pv_in, nrows, ncols, xv, iv, pv, threads);
         // create output.
         out.push_back(xv);
         out.push_back(iv);

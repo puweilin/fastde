@@ -365,6 +365,41 @@ template int csc_rbind_vec(
     std::vector<cpp11::integers> const & pvecs, 
     cpp11::integers const & nrows, 
     cpp11::integers const & ncols, 
+    std::vector<double> & ox,
+    std::vector<int> & oi,
+    std::vector<int> & op,
+    int const & threads);
+
+// return total number of rows.
+template int csc_rbind_vec(
+    std::vector<cpp11::doubles> const & xvecs, 
+    std::vector<cpp11::integers> const & ivecs, 
+    std::vector<cpp11::integers> const & pvecs, 
+    cpp11::integers const & nrows, 
+    cpp11::integers const & ncols, 
+    std::vector<double> & ox,
+    std::vector<int> & oi,
+    std::vector<double> & op,
+    int const & threads);
+
+// return total number of rows.
+template int csc_rbind_vec(
+    std::vector<cpp11::doubles> const & xvecs, 
+    std::vector<cpp11::integers> const & ivecs, 
+    std::vector<cpp11::doubles> const & pvecs, 
+    cpp11::integers const & nrows, 
+    cpp11::integers const & ncols, 
+    std::vector<double> & ox,
+    std::vector<int> & oi,
+    std::vector<double> & op,
+    int const & threads);
+
+template int csc_rbind_vec(
+    std::vector<cpp11::doubles> const & xvecs, 
+    std::vector<cpp11::integers> const & ivecs, 
+    std::vector<cpp11::integers> const & pvecs, 
+    cpp11::integers const & nrows, 
+    cpp11::integers const & ncols, 
     cpp11::writable::doubles & ox,
     cpp11::writable::integers & oi,
     cpp11::writable::integers &  op,
@@ -395,85 +430,76 @@ template int csc_rbind_vec(
     int const & threads);
 
 
-template int csc_rbind_vec(
-    // std::vector<std::vector<double>> const & xvecs, 
-    // std::vector<std::vector<int>> const & ivecs, 
-    // std::vector<std::vector<int>> const & pvecs, 
-    cpp11::list_of<cpp11::doubles> const & xvecs, 
-    cpp11::list_of<cpp11::integers> const & ivecs, 
-    cpp11::list_of<cpp11::integers> const & pvecs, 
-    cpp11::integers const & nrows, 
-    cpp11::integers const & ncols, 
-    std::vector<double> & ox,
-    std::vector<int> & oi,
-    std::vector<int> & op,
-    int const & threads);
+// template int csc_rbind_vec(
+//     cpp11::list_of<cpp11::doubles> const & xvecs, 
+//     cpp11::list_of<cpp11::integers> const & ivecs, 
+//     cpp11::list_of<cpp11::integers> const & pvecs, 
+//     cpp11::integers const & nrows, 
+//     cpp11::integers const & ncols, 
+//     std::vector<double> & ox,
+//     std::vector<int> & oi,
+//     std::vector<int> & op,
+//     int const & threads);
 
-// return total number of rows.
-template int csc_rbind_vec(
-    // std::vector<std::vector<double>> const & xvecs, 
-    // std::vector<std::vector<int>> const & ivecs, 
-    // std::vector<std::vector<int>> const & pvecs, 
-    cpp11::list_of<cpp11::doubles> const & xvecs, 
-    cpp11::list_of<cpp11::integers> const & ivecs, 
-    cpp11::list_of<cpp11::integers> const & pvecs, 
-    cpp11::integers const & nrows, 
-    cpp11::integers const & ncols, 
-    std::vector<double> & ox,
-    std::vector<int> & oi,
-    std::vector<double> & op,
-    int const & threads);
+// // return total number of rows.
+// template int csc_rbind_vec(
+//     cpp11::list_of<cpp11::doubles> const & xvecs, 
+//     cpp11::list_of<cpp11::integers> const & ivecs, 
+//     cpp11::list_of<cpp11::integers> const & pvecs, 
+//     cpp11::integers const & nrows, 
+//     cpp11::integers const & ncols, 
+//     std::vector<double> & ox,
+//     std::vector<int> & oi,
+//     std::vector<double> & op,
+//     int const & threads);
 
-// return total number of rows.
-template int csc_rbind_vec(
-    // std::vector<std::vector<double>> const & xvecs, 
-    // std::vector<std::vector<int>> const & ivecs, 
-    // std::vector<std::vector<double>> const & pvecs, 
-    cpp11::list_of<cpp11::doubles> const & xvecs, 
-    cpp11::list_of<cpp11::integers> const & ivecs, 
-    cpp11::list_of<cpp11::doubles> const & pvecs, 
-    cpp11::integers const & nrows, 
-    cpp11::integers const & ncols, 
-    std::vector<double> & ox,
-    std::vector<int> & oi,
-    std::vector<double> & op,
-    int const & threads);
+// // return total number of rows.
+// template int csc_rbind_vec(
+//     cpp11::list_of<cpp11::doubles> const & xvecs, 
+//     cpp11::list_of<cpp11::integers> const & ivecs, 
+//     cpp11::list_of<cpp11::doubles> const & pvecs, 
+//     cpp11::integers const & nrows, 
+//     cpp11::integers const & ncols, 
+//     std::vector<double> & ox,
+//     std::vector<int> & oi,
+//     std::vector<double> & op,
+//     int const & threads);
 
 
-template int csc_rbind_vec(
-    cpp11::list_of<cpp11::doubles> const & xvecs, 
-    cpp11::list_of<cpp11::integers> const & ivecs, 
-    cpp11::list_of<cpp11::integers> const & pvecs, 
-    cpp11::integers const & nrows, 
-    cpp11::integers const & ncols, 
-    cpp11::writable::doubles & ox,
-    cpp11::writable::integers & oi,
-    cpp11::writable::integers &  op,
-    int const & threads);
+// template int csc_rbind_vec(
+//     cpp11::list_of<cpp11::doubles> const & xvecs, 
+//     cpp11::list_of<cpp11::integers> const & ivecs, 
+//     cpp11::list_of<cpp11::integers> const & pvecs, 
+//     cpp11::integers const & nrows, 
+//     cpp11::integers const & ncols, 
+//     cpp11::writable::doubles & ox,
+//     cpp11::writable::integers & oi,
+//     cpp11::writable::integers &  op,
+//     int const & threads);
 
-// return total number of rows.
-template int csc_rbind_vec(
-    cpp11::list_of<cpp11::doubles> const & xvecs, 
-    cpp11::list_of<cpp11::integers> const & ivecs, 
-    cpp11::list_of<cpp11::integers> const & pvecs, 
-    cpp11::integers const & nrows, 
-    cpp11::integers const & ncols, 
-    cpp11::writable::doubles & ox,
-    cpp11::writable::integers & oi,
-    cpp11::writable::doubles & op,
-    int const & threads);
+// // return total number of rows.
+// template int csc_rbind_vec(
+//     cpp11::list_of<cpp11::doubles> const & xvecs, 
+//     cpp11::list_of<cpp11::integers> const & ivecs, 
+//     cpp11::list_of<cpp11::integers> const & pvecs, 
+//     cpp11::integers const & nrows, 
+//     cpp11::integers const & ncols, 
+//     cpp11::writable::doubles & ox,
+//     cpp11::writable::integers & oi,
+//     cpp11::writable::doubles & op,
+//     int const & threads);
 
-// return total number of rows.
-template int csc_rbind_vec(
-    cpp11::list_of<cpp11::doubles> const & xvecs, 
-    cpp11::list_of<cpp11::integers> const & ivecs, 
-    cpp11::list_of<cpp11::doubles> const & pvecs, 
-    cpp11::integers const & nrows, 
-    cpp11::integers const & ncols, 
-    cpp11::writable::doubles & ox,
-    cpp11::writable::integers & oi,
-    cpp11::writable::doubles & op,
-    int const & threads);
+// // return total number of rows.
+// template int csc_rbind_vec(
+//     cpp11::list_of<cpp11::doubles> const & xvecs, 
+//     cpp11::list_of<cpp11::integers> const & ivecs, 
+//     cpp11::list_of<cpp11::doubles> const & pvecs, 
+//     cpp11::integers const & nrows, 
+//     cpp11::integers const & ncols, 
+//     cpp11::writable::doubles & ox,
+//     cpp11::writable::integers & oi,
+//     cpp11::writable::doubles & op,
+//     int const & threads);
 
 // return total number of columns.
 template int csc_cbind(
@@ -584,41 +610,41 @@ template int csc_cbind_vec(
     cpp11::writable::doubles & op,
     int const & threads);
 
-// return total number of columns.
-template int csc_cbind_vec(
-    cpp11::list_of<cpp11::doubles> const & xvecs, 
-    cpp11::list_of<cpp11::integers> const & ivecs, 
-    cpp11::list_of<cpp11::integers> const & pvecs, 
-    cpp11::integers const & nrows, 
-    cpp11::integers const & ncols, 
-    cpp11::writable::doubles & ox,
-    cpp11::writable::integers & oi,
-    cpp11::writable::integers & op,
-    int const & threads);
+// // return total number of columns.
+// template int csc_cbind_vec(
+//     cpp11::list_of<cpp11::doubles> const & xvecs, 
+//     cpp11::list_of<cpp11::integers> const & ivecs, 
+//     cpp11::list_of<cpp11::integers> const & pvecs, 
+//     cpp11::integers const & nrows, 
+//     cpp11::integers const & ncols, 
+//     cpp11::writable::doubles & ox,
+//     cpp11::writable::integers & oi,
+//     cpp11::writable::integers & op,
+//     int const & threads);
 
-// return total number of columns.
-template int csc_cbind_vec(
-    cpp11::list_of<cpp11::doubles> const & xvecs, 
-    cpp11::list_of<cpp11::integers> const & ivecs, 
-    cpp11::list_of<cpp11::integers> const & pvecs, 
-    cpp11::integers const & nrows, 
-    cpp11::integers const & ncols, 
-    cpp11::writable::doubles & ox,
-    cpp11::writable::integers & oi,
-    cpp11::writable::doubles & op,
-    int const & threads);
+// // return total number of columns.
+// template int csc_cbind_vec(
+//     cpp11::list_of<cpp11::doubles> const & xvecs, 
+//     cpp11::list_of<cpp11::integers> const & ivecs, 
+//     cpp11::list_of<cpp11::integers> const & pvecs, 
+//     cpp11::integers const & nrows, 
+//     cpp11::integers const & ncols, 
+//     cpp11::writable::doubles & ox,
+//     cpp11::writable::integers & oi,
+//     cpp11::writable::doubles & op,
+//     int const & threads);
 
-// return total number of columns.
-template int csc_cbind_vec(
-    cpp11::list_of<cpp11::doubles> const & xvecs, 
-    cpp11::list_of<cpp11::integers> const & ivecs, 
-    cpp11::list_of<cpp11::doubles> const & pvecs, 
-    cpp11::integers const & nrows, 
-    cpp11::integers const & ncols, 
-    cpp11::writable::doubles & ox,
-    cpp11::writable::integers & oi,
-    cpp11::writable::doubles & op,
-    int const & threads);
+// // return total number of columns.
+// template int csc_cbind_vec(
+//     cpp11::list_of<cpp11::doubles> const & xvecs, 
+//     cpp11::list_of<cpp11::integers> const & ivecs, 
+//     cpp11::list_of<cpp11::doubles> const & pvecs, 
+//     cpp11::integers const & nrows, 
+//     cpp11::integers const & ncols, 
+//     cpp11::writable::doubles & ox,
+//     cpp11::writable::integers & oi,
+//     cpp11::writable::doubles & op,
+//     int const & threads);
 
 // csc
 template void csc_colsums_iter(

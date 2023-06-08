@@ -15,6 +15,12 @@
 
 // adapters for cpp11 r_vector to c++ implementation
 
+#include "cpp11/doubles.hpp"
+#include "cpp11/integers.hpp"
+cpp11::doubles to_cpp(SEXP x, double t);
+cpp11::integers to_cpp(SEXP x, int t);
+
+
 
 // NOTe:  there is no formal definition of sparse matrix.
 // input is column major, so i has the row ids, and p is per column.

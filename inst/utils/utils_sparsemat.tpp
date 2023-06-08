@@ -19,6 +19,8 @@
 #include "fastde/sparsemat.hpp"
 
 
+cpp11::doubles to_cpp(SEXP x, double t) { return cpp11::as_doubles(x); }
+cpp11::integers to_cpp(SEXP x, int t) { return cpp11::as_integers(x); }
 
 
 // NOTe:  there is no formal definition of sparse matrix.
@@ -106,7 +108,7 @@ extern cpp11::writable::list _sp_transpose_par(
 {   
     int tid = omp_get_thread_num();
     size_t block = nelem / threads;
-    size_t rem = nelem - threads * block;
+    int rem = nelem - threads * block;
     size_t offset = tid * block + (tid > rem ? rem : tid);
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
@@ -131,7 +133,7 @@ extern cpp11::writable::list _sp_transpose_par(
 {   
     int tid = omp_get_thread_num();
     size_t block = (nrow+1) / threads;   // each thread handles a block of rows.
-    size_t rem = (nrow+1) - threads * block;
+    int rem = (nrow+1) - threads * block;
     size_t offset = tid * block + (tid > rem ? rem : tid);
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
@@ -191,7 +193,7 @@ extern cpp11::writable::list _sp_transpose_par(
 {   
     int tid = omp_get_thread_num();
     size_t block = nelem / threads;
-    size_t rem = nelem - threads * block;
+    int rem = nelem - threads * block;
     size_t offset = tid * block + (tid > rem ? rem : tid);
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
@@ -208,7 +210,7 @@ extern cpp11::writable::list _sp_transpose_par(
         val = x[offset];   // current value
         // if the current element pos reaches first elem of next column (*pptr),
         // then go to next column (increment cid and pptr).
-        for (; offset >= static_cast<PT2>(p[cid+1]); ++cid);  // current column id
+        for (; offset >= static_cast<size_t>(p[cid+1]); ++cid);  // current column id
 
         // now copy and update.
         // curr pos is the offset for the transposed row (new col), in tp.
@@ -295,7 +297,7 @@ extern cpp11::writable::list _sp_transpose(
     PT2 pos;
     decltype(nelem) e = 0;
     
-    for (PT2 e = 0; e < nelem; ++e) {
+    for (e = 0; e < nelem; ++e) {
         rid = i[e];   // current row id (starts with 0)
         val = x[e];   // current value
         // if the current element pos reaches first elem of next column (*pptr),
@@ -448,7 +450,7 @@ extern void _sp_transpose_par(
 {   
     int tid = omp_get_thread_num();
     size_t block = nelem / threads;
-    size_t rem = nelem - threads * block;
+    int rem = nelem - threads * block;
     size_t offset = tid * block + (tid > rem ? rem : tid);
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
@@ -473,7 +475,7 @@ extern void _sp_transpose_par(
 {   
     int tid = omp_get_thread_num();
     size_t block = (nrow+1) / threads;   // each thread handles a block of rows.
-    size_t rem = (nrow+1) - threads * block;
+    int rem = (nrow+1) - threads * block;
     size_t offset = tid * block + (tid > rem ? rem : tid);
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
@@ -534,7 +536,7 @@ extern void _sp_transpose_par(
 {   
     int tid = omp_get_thread_num();
     size_t block = nelem / threads;
-    size_t rem = nelem - threads * block;
+    int rem = nelem - threads * block;
     size_t offset = tid * block + (tid > rem ? rem : tid);
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
@@ -551,7 +553,7 @@ extern void _sp_transpose_par(
         val = x[offset];   // current value
         // if the current element pos reaches first elem of next column (*pptr),
         // then go to next column (increment cid and pptr).
-        for (; offset >= static_cast<PT2>(p[cid+1]); ++cid);  // current column id
+        for (; offset >= static_cast<size_t>(p[cid+1]); ++cid);  // current column id
 
         // now copy and update.
         // curr pos is the offset for the transposed row (new col), in tp.
@@ -663,7 +665,7 @@ extern void _sp_transpose(
     PT2 pos;
     decltype(nelem) e = 0;
     
-    for (PT2 e = 0; e < nelem; ++e) {
+    for (e = 0; e < nelem; ++e) {
         rid = i[e];   // current row id (starts with 0)
         val = x[e];   // current value
         // if the current element pos reaches first elem of next column (*pptr),
@@ -722,7 +724,7 @@ extern OUT _sp_to_dense(
     if (threads == 1) {
         IT2 r;
         PT2 istart, iend;
-        for (size_t c = 0; c < ncol; ++c) {
+        for (IT2 c = 0; c < ncol; ++c) {
             istart = p[c];
             iend = p[c+1];
 
@@ -738,7 +740,7 @@ extern OUT _sp_to_dense(
 {   
         int tid = omp_get_thread_num();
         size_t block = ncol / threads;
-        size_t rem = ncol - threads * block;
+        int rem = ncol - threads * block;
         size_t offset = tid * block + (tid > rem ? rem : tid);
         int nid = tid + 1;
         size_t end = nid * block + (nid > rem ? rem : nid);
@@ -803,7 +805,7 @@ extern OUT _sp_to_dense_transposed(
     // now iterate and fill   
         IT r;
         PT2 istart, iend;
-        for (size_t c = 0; c < ncol; ++c) {  // iterate by source.
+        for (IT2 c = 0; c < ncol; ++c) {  // iterate by source.
             istart = p[c];
             iend = p[c+1];
 
@@ -817,7 +819,7 @@ extern OUT _sp_to_dense_transposed(
 {   
         int tid = omp_get_thread_num();
         size_t block = ncol / threads;
-        size_t rem = ncol - threads * block;
+        int rem = ncol - threads * block;
         size_t offset = tid * block + (tid > rem ? rem : tid);
         int nid = tid + 1;
         size_t end = nid * block + (nid > rem ? rem : nid);
@@ -869,19 +871,20 @@ extern cpp11::writable::list _sp_rbind(
 {   
     int tid = omp_get_thread_num();
     size_t block = (ncol+1) / threads;   // each thread handles a block of rows.
-    size_t rem = (ncol+1) - threads * block;
+    int rem = (ncol+1) - threads * block;
     size_t offset = tid * block + (tid > rem ? rem : tid);
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
     
-    for (IT i = offset; i < end; ++i) {
+    for (size_t i = offset; i < end; ++i) {
         p_offsets[i] = 0;
     }
 }
 
     // count the number of non-zero elements per column
     for (int j = 0; j < n_vecs; ++j) {
-        auto ip = pvecs[j];
+        cpp11::r_vector<PT> ip = to_cpp(pvecs.at(j), PT());
+        
         for (IT i = 0; i < ncol; ++i) {
             p_offsets[i+1] += ip[i+1] - ip[i];
         }
@@ -905,13 +908,15 @@ extern cpp11::writable::list _sp_rbind(
     cpp11::writable::r_vector<PT> pv(ncol + 1);
 
     // copy data over to the aggregated output
-    PT2 nz = 0;
+    // PT2 nz = 0;
     for (int j = 0; j < n_vecs; ++j) {
 
 
-        auto ix = xvecs[j];
-        auto ii = ivecs[j];
-        auto ip = pvecs[j];
+        // TODO: will be able to simplify after cpp11 v0.4.4
+        cpp11::r_vector<XT> ix = cpp11::as_doubles(xvecs.at(j));
+        cpp11::r_vector<IT> ii = cpp11::as_integers(ivecs.at(j));
+        cpp11::r_vector<PT> ip = to_cpp(pvecs.at(j), PT());
+
         for (IT i = 0; i < ncol; ++i) {
             PT2 in_start = ip[i];
             PT2 in_end = ip[i+1];
@@ -931,12 +936,12 @@ extern cpp11::writable::list _sp_rbind(
 {   
     int tid = omp_get_thread_num();
     size_t block = ncol / threads;   // each thread handles a block of rows.
-    size_t rem = ncol - threads * block;
+    int rem = ncol - threads * block;
     size_t offset = tid * block + (tid > rem ? rem : tid);
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
 
-    for (IT i = offset; i < end; ++i) {
+    for (size_t i = offset; i < end; ++i) {
         pv[i+1] = p_offsets[i];
     }
 }
@@ -982,9 +987,10 @@ extern cpp11::writable::list _sp_cbind(
     c_offsets[0] = 0;
     IT nc = 0;
     for (int i = 0; i < n_vecs; ++i) {
+        cpp11::r_vector<PT> ip = to_cpp(pvecs.at(i), PT());;
         nc = ncols[i];
         c_offsets[i+1] = c_offsets[i] + nc;
-        p_offsets[i+1] = p_offsets[i] + pvecs[i][nc];
+        p_offsets[i+1] = p_offsets[i] + ip[nc];
     }
     IT ncol = c_offsets[n_vecs];
 
@@ -999,13 +1005,14 @@ extern cpp11::writable::list _sp_cbind(
 
     // copy data over to the aggregated output
     // omp causes stack imbalance.   
-    PT2 nz = 0, out_x = 0, out_p = 0, poff;
+    PT2 nz = 0, poff; //, out_x = 0, out_p = 0;
     IT coff = 0;
     for (int j = 0; j < n_vecs; ++j) {
 
-        auto ix = xvecs[j];
-        auto ii = ivecs[j];
-        auto ip = pvecs[j];
+        // TODO: will be able to simplify after cpp11 v0.4.4
+        cpp11::r_vector<XT> ix = cpp11::as_doubles(xvecs.at(j));
+        cpp11::r_vector<IT> ii = cpp11::as_integers(ivecs.at(j));
+        cpp11::r_vector<PT> ip = to_cpp(pvecs.at(j), PT());;
 
         // copy the x and i vectors
         nc = ncols[j];
@@ -1055,7 +1062,7 @@ extern cpp11::writable::r_vector<XT> _sp_colsums(
 {   
     int tid = omp_get_thread_num();
     size_t block = ncol / threads;
-    size_t rem = ncol - threads * block;
+    int rem = ncol - threads * block;
     size_t offset = tid * block + (tid > rem ? rem : tid);
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
@@ -1102,7 +1109,7 @@ extern cpp11::writable::r_vector<XT> _sp_rowsums(
 {   
         int tid = omp_get_thread_num();
         size_t block = nzcount / threads;
-        size_t rem = nzcount - threads * block;
+        int rem = nzcount - threads * block;
         size_t offset = tid * block + (tid > rem ? rem : tid);
         int nid = tid + 1;
         size_t end = nid * block + (nid > rem ? rem : nid);
@@ -1121,14 +1128,14 @@ extern cpp11::writable::r_vector<XT> _sp_rowsums(
 {   
         int tid = omp_get_thread_num();
         size_t block = nrow / threads;
-        size_t rem = nrow - threads * block;
+        int rem = nrow - threads * block;
         size_t offset = tid * block + (tid > rem ? rem : tid);
         int nid = tid + 1;
         size_t end = nid * block + (nid > rem ? rem : nid);
 
         for (; offset < end; ++offset) {
             XT sum = 0;
-            for (size_t t = 0; t < threads; ++t) {
+            for (int t = 0; t < threads; ++t) {
                 sum += sums[t][offset];
             }
 
