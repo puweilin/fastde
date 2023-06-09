@@ -1,9 +1,6 @@
 # created with usethis::use_test()
 # run with devtools::test()
 
-source("../harness.R")
-
-
 test_that("normalize_rc", {
 
   nrows = 3000
@@ -17,7 +14,7 @@ test_that("normalize_rc", {
   spmat@x = abs(spmat@x)
 
 
-  seurat_norm <- Seurat::NormalizeData(spmat, normalization.method = "RC", scale.factor=1e4, margin=1)  # margin==1 means across features, i.e. colsum.
+  seurat_norm <- Seurat::NormalizeData(spmat, normalization.method = "RC", scale.factor=1e4, margin=1, verbose=FALSE)  # margin==1 means across features, i.e. colsum.
 
   fastde_norm <- fastde::sp_normalize(spmat, normalization.method = "RC", scale.factor=1e4, margin=1, threads=1L)  # margin==1 means across features, i.e. colsum.
 
@@ -41,7 +38,7 @@ test_that("normalize_ln", {
   spmat@x = abs(spmat@x)
 
 
-  seurat_norm <- Seurat::NormalizeData(spmat, normalization.method = "LogNormalize", scale.factor=1e4, margin=1)  # margin==1 means across features, i.e. colsum.
+  seurat_norm <- Seurat::NormalizeData(spmat, normalization.method = "LogNormalize", scale.factor=1e4, margin=1, verbose=FALSE)  # margin==1 means across features, i.e. colsum.
 
   fastde_norm <- fastde::sp_normalize(spmat, normalization.method = "LogNormalize", scale.factor=1e4, margin=1, threads=1L)  # margin==1 means across features, i.e. colsum.
 
@@ -65,7 +62,7 @@ test_that("normalize_clr", {
   spmat@x = abs(spmat@x)
 
 
-  seurat_out <- Seurat::NormalizeData(spmat, normalization.method = "CLR", scale.factor=1e4, margin=1)  # margin==1 means across features, i.e. colsum.
+  seurat_out <- Seurat::NormalizeData(spmat, normalization.method = "CLR", scale.factor=1e4, margin=1, verbose=FALSE)  # margin==1 means across features, i.e. colsum.
   seurat_norm <- as.sparse(x= seurat_out)
 
   fastde_norm <- fastde::sp_normalize(spmat, normalization.method = "CLR", scale.factor=1e4, margin=1, threads=1L)  # margin==1 means across features, i.e. colsum.
@@ -78,7 +75,7 @@ test_that("normalize_clr", {
 
 
 
-  seurat_out <- Seurat::NormalizeData(spmat, normalization.method = "CLR", scale.factor=1e4, margin=2)  # margin==1 means across features, i.e. colsum.
+  seurat_out <- Seurat::NormalizeData(spmat, normalization.method = "CLR", scale.factor=1e4, margin=2, verbose=FALSE)  # margin==1 means across features, i.e. colsum.
   seurat_norm <- as.sparse(x= seurat_out)
   
   fastde_norm <- fastde::sp_normalize(spmat, normalization.method = "CLR", scale.factor=1e4, margin=2, threads=1L)  # margin==1 means across features, i.e. colsum.

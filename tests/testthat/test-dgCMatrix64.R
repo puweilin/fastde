@@ -1,8 +1,6 @@
 # created with usethis::use_test()
 # run with devtools::test()
 
-source("../harness.R")
-
 test_that("create", {
   sobj <- load_pbmc3k()
 

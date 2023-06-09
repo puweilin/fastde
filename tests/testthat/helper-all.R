@@ -1,7 +1,3 @@
-library(tictoc)
-library(Seurat)
-library(SeuratData)
-
 print_mat <- function(mat, count) {
     print(head(mat, n = count)[, 1:count])
     print("...")
@@ -42,6 +38,7 @@ load_pbmc3k <- function() {
 
     # SeuratData::InstallData("pbmc3k")
     # data("pbmc3k")
+    # str(pbmc3k)
     # return(pbmc3k)
 
 }
@@ -51,14 +48,14 @@ load_pbmc3k <- function() {
 seurat_pipeline <- function(sobj) {
     future::plan(sequential)
     
-    pbmc <- Seurat::NormalizeData(sobj, normalization.method = "LogNormalize", scale.factor = 10000)
+    pbmc <- Seurat::NormalizeData(sobj, normalization.method = "LogNormalize", scale.factor = 10000, verbose=FALSE)
     
     
     # vst throws some kind of error or warning: 
     # In simpleLoess(y, x, w, span, degree = degree, parametric = parametric,  :
     # Chernobyl! trL<k 1.8409
     # thi means not enough data poitns to for loess smooth estimation
-    pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+    pbmc <- Seurat::FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000, verbose=FALSE)
     all.genes <- rownames(pbmc)
 
     pbmc <- Seurat::ScaleData(pbmc, features = all.genes, verbose = FALSE, scale.max = 100000)
@@ -68,11 +65,11 @@ seurat_pipeline <- function(sobj) {
     # 30 components is fine.
     pbmc <- Seurat::RunPCA(pbmc, features = VariableFeatures(object = pbmc), verbose = FALSE, npcs=30)
 
-    pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:10)
+    pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:30, verbose=FALSE)
 
-    pbmc <- Seurat::FindClusters(pbmc, resolution = 0.5)
+    pbmc <- Seurat::FindClusters(pbmc, resolution = 0.5, verbose=FALSE)
 
-    str(pbmc)
+    # str(pbmc)
 
     # in this pipeline, calling RunUMAP causes failure,
     # due to non finite values in matrix.

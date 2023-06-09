@@ -60,20 +60,20 @@ spmat64 <- as.dgCMatrix64(spmat)
 ```
 
 ## Read and write dgCMatrix64 object to files
-dgCMatrix64 can be serialized to and deserialized from HDF5 files with the provided functions `Write10X_h5` and `Read10X_h5` functions.  Both will adapt to data size automatically to accept or product `dgCMatrix` or `dgCMatrix64` objects. 
+dgCMatrix64 can be serialized to and deserialized from HDF5 files with the provided functions `Write10X_h5` and `Read10X_h5_big` functions.  Both will adapt to data size automatically to accept or product `dgCMatrix` or `dgCMatrix64` objects. 
 
 ```{r io, fig.height=8, fig.width=15, eval = FALSE, echo = FALSE, results = 'hide'}
 # write 
 fastde::Write10X_h5(spmat, "test_spmat.h5")
 
 # read
-spmat_2 = fastde::Read10X_h5("test_spmat.h5")
+spmat_2 = fastde::Read10X_h5_big("test_spmat.h5")
 
 # write 
 fastde::Write10X_h5(spmat64, "test_spmat64.h5")
 
 # read
-spmat64_2 = fastde::Read10X_h5("test_spmat64.h5")
+spmat64_2 = fastde::Read10X_h5_big("test_spmat64.h5")
 ```
 
 ## Supported Matrix operations
