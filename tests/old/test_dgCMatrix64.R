@@ -113,7 +113,7 @@ str(sobject4)
 toc()
 
 tic("READ pbmc3k h5 big")
-sobject3 <- fastde::Read10X_h5(f)
+sobject3 <- fastde::Read10X_h5_big(f)
 str(sobject3)
 toc()
 
@@ -125,7 +125,7 @@ message("FINISHED 3")
 # # f2 <- "~/data/SingleCell/1M_neurons_filtered_gene_bc_matrices_h5.h5"
 # f2 <- "~/scgc/data/1M_neurons_filtered_gene_bc_matrices_h5.h5"
 
-# sobject2 <- fastde::Read10X_h5(f2)
+# sobject2 <- fastde::Read10X_h5_big(f2)
 # #sobject2
 # toc()
 

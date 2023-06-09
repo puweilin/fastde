@@ -10,7 +10,7 @@ tic("READ brain 1.3M")
 # f2 <- "~/data/SingleCell/1M_neurons_filtered_gene_bc_matrices_h5.h5"
 f2 <- "~/scgc/data/1M_neurons_filtered_gene_bc_matrices_h5.h5"
 
-sobject2 <- fastde::Read10X_h5(f2)
+sobject2 <- fastde::Read10X_h5_big(f2)
 #sobject2
 toc()
 end_time <- Sys.time()
