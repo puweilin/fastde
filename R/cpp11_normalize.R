@@ -1,4 +1,3 @@
-library(tictoc)
 
 #' R Sparse transpose
 #'
@@ -38,25 +37,17 @@ sp_normalize <- function(spmat,
     )
     if (is(spmat, 'dgCMatrix')) {
         
-        tic("normalize")
         newx <- cpp11_sp_normalize(x=spmat@x, i=spmat@i, p=spmat@p, nrow=spmat@Dim[1], ncol=spmat@Dim[2], scale_factor=scale.factor, margin=margin, method=met, threads=threads)
-        toc()
-        str(newx)
-        tic("create obj")
+        # str(newx)
         out <- new("dgCMatrix", x=newx, i=spmat@i, p=spmat@p, Dim=spmat@Dim, Dimnames=list(rownames(spmat), colnames(spmat)))
-        toc()
         return (out)
     } else if (is(spmat, 'dgCMatrix64')) {
-        tic("normalize")
         newx <- cpp11_sp64_normalize(x=spmat@x, i=spmat@i, p=spmat@p, nrow=spmat@Dim[1], ncol=spmat@Dim[2], scale_factor=scale.factor, margin=margin, method=met, threads=threads)
-        toc()
-        str(newx)
-        tic("create obj")
+        # str(newx)
         out <- new("dgCMatrix64", x=newx, i=spmat@i, p=spmat@p, Dim=spmat@Dim, Dimnames=list(rownames(spmat), colnames(spmat)))
-        toc()
         return(out)
     } else {
-        print("USING R DEFAULT")
+        print("ERROR: unsupported data type for normalize")
         return(spmat)
     }
 }

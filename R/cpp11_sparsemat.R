@@ -1,4 +1,4 @@
-library(tictoc)
+# library(tictoc)
 
 #' R Sparse transpose
 #'
@@ -13,20 +13,20 @@ library(tictoc)
 #' @export
 sp_transpose <- function(spmat, threads = 1) {
     if (is(spmat, 'dgCMatrix')) {
-        tic("cpp transpose")
+        # tic("cpp transpose")
         mlist <- cpp11_sp_transpose(spmat@x, spmat@i, spmat@p, spmat@Dim[1], spmat@Dim[2], threads)
-        toc()
-        tic("create obj")
+        # toc()
+        # tic("create obj")
         out <- new("dgCMatrix", x=mlist$x, i=mlist$i, p=mlist$p, Dim=c(spmat@Dim[2], spmat@Dim[1]), Dimnames=list(colnames(spmat), rownames(spmat)))
-        toc()
+        # toc()
         return (out)
     } else if (is(spmat, 'dgCMatrix64')) {
-        tic("cpp transpose")
+        # tic("cpp transpose")
         mlist <- cpp11_sp64_transpose(spmat@x, spmat@i, spmat@p, spmat@Dim[1], spmat@Dim[2], threads)
-        toc()
-        tic("create obj")
+        # toc()
+        # tic("create obj")
         out <- new("dgCMatrix64", x=mlist$x, i=mlist$i, p=mlist$p, Dim=c(spmat@Dim[2], spmat@Dim[1]), Dimnames=list(colnames(spmat), rownames(spmat)))
-        toc()
+        # toc()
         return(out)
     } else {
         print("USING R DEFAULT")
@@ -123,7 +123,7 @@ sp_rbind <- function(spmats, threads = 1, method = 1) {
     ncs <- integer(nmats)
     nms <- character()
 
-    tic("gathering data")
+    # tic("gathering data")
     for (i in 1:nmats) {
         xs[[i]] = spmats[[i]]@x
         iss[[i]] = spmats[[i]]@i
@@ -133,9 +133,9 @@ sp_rbind <- function(spmats, threads = 1, method = 1) {
 
         nms <- c(nms, rownames(spmats[[i]]))
     }
-    toc()
+    # toc()
         
-    tic("combine")
+    # tic("combine")
     # invoke the rbind
     if (is(spmats[[1]], 'dgCMatrix')) {
         m <- cpp11_sp_rbind(xs, iss, ps, nrs, ncs, threads, method = method)
@@ -145,12 +145,12 @@ sp_rbind <- function(spmats, threads = 1, method = 1) {
         print("UNSUPPORTED.  Matrices must be sparse matrices")
         return(NULL)
     }
-    toc()
+    # toc()
 
-    str(m[[3]])
-    str(m[[2]])
+    # str(m[[3]])
+    # str(m[[2]])
 
-    tic("build output")
+    # tic("build output")
     if (is.integer(m[[3]])) {
         out <- new('dgCMatrix', x = m[[1]], i = m[[2]], p = m[[3]], 
             Dim = c(m[[4]], m[[5]]),
@@ -160,7 +160,7 @@ sp_rbind <- function(spmats, threads = 1, method = 1) {
             Dim = c(m[[4]], m[[5]]),
             Dimnames = list(nms, colnames(spmats[[1]])))
     }
-    toc()
+    # toc()
 
     return(out)
 
@@ -190,7 +190,7 @@ sp_cbind <- function(spmats, threads = 1, method = 1) {
     ncs <- integer(nmats)
     nms <- character()
 
-    tic("gather data")
+    # tic("gather data")
     for (i in 1:nmats) {
         xs[[i]] = spmats[[i]]@x
         iss[[i]] = spmats[[i]]@i
@@ -200,9 +200,9 @@ sp_cbind <- function(spmats, threads = 1, method = 1) {
 
         nms <- c(nms, colnames(spmats[[i]]))
     }
-    toc()
+    # toc()
 
-    tic("combine")
+    # tic("combine")
     # invoke the rbind
     if (is(spmats[[1]], 'dgCMatrix')) {
         m <- cpp11_sp_cbind(xs, iss, ps, nrs, ncs, threads, method = method)
@@ -212,12 +212,12 @@ sp_cbind <- function(spmats, threads = 1, method = 1) {
         print("UNSUPPORTED.  Matrices must be sparse matrices")
         return(NULL)
     }
-    toc()
+    # toc()
 
     # print(length(m[[1]]))
     # print(m[[3]][[m[[5]]]])
 
-    tic("create output")
+    # tic("create output")
     if (is.integer(m[[3]])) {
         out <- new('dgCMatrix', x = m[[1]], i = m[[2]], p = m[[3]], 
             Dim = c(m[[4]], m[[5]]),
@@ -227,7 +227,7 @@ sp_cbind <- function(spmats, threads = 1, method = 1) {
             Dim = c(m[[4]], m[[5]]),
             Dimnames = list(rownames(spmats[[1]]), nms))
     }
-    toc()
+    # toc()
 
     return(out)
 
@@ -246,7 +246,7 @@ sp_cbind <- function(spmats, threads = 1, method = 1) {
 #' @name sp_rowSums
 #' @export
 sp_rowSums <- function(spmat, threads = 1, method = 1) {
-    tic("[TIME] Row sums")
+    # tic("[TIME] Row sums")
     if (is(spmat, 'dgCMatrix')) {
         # if (threads == 1) {
         #     m <- rowSums(spmat)
@@ -260,7 +260,7 @@ sp_rowSums <- function(spmat, threads = 1, method = 1) {
         return(NULL)
     }
     names(m) <- rownames(spmat)
-    toc()
+    # toc()
     return(m)
 }
 
@@ -276,7 +276,7 @@ sp_rowSums <- function(spmat, threads = 1, method = 1) {
 #' @name sp_rowSums
 #' @export
 sp_colSums <- function(spmat, threads = 1, method = 1) {
-    tic("[TIME] Col sums")
+    # tic("[TIME] Col sums")
     if (is(spmat, 'dgCMatrix')) {
         # if (threads == 1) {
         #     m <- colSums(spmat)
@@ -291,6 +291,6 @@ sp_colSums <- function(spmat, threads = 1, method = 1) {
     }
     names(m) <- colnames(spmat)
 
-    toc()
+    # toc()
     return(m)
 }

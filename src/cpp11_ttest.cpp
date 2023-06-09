@@ -27,7 +27,7 @@ extern cpp11::sexp cpp11_dense_ttest(
   int nfeatures = input.ncol();
 
   double * mat = reinterpret_cast<double *>(malloc(nelem * sizeof(double)));
-  Rprintf("malloc for mat : %dx%d %ld :  %x\n", nsamples, nfeatures, nelem, mat);
+  // Rprintf("malloc for mat : %dx%d %ld :  %x\n", nsamples, nfeatures, nelem, mat);
 
   copy_rmatrix_to_cppvector(input, mat);
 

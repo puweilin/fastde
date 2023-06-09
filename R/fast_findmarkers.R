@@ -412,6 +412,7 @@ FastFindMarkers.default <- function(
     verbose = verbose,
     ...
   )
+  # str(fc.results)
   colidx <- which(! colnames(fc.results) %in% c("cluster", "gene", "pct.1", "pct.2"))[1]
   fc.name <- colnames(fc.results)[colidx]
 
