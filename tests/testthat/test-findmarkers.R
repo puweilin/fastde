@@ -9,12 +9,12 @@ test_that("findallmarkers_wilcox", {
 
   # } else {
     sobj = load_pbmc3k()
-  #   # str(sobj)
+    # str(sobj)
     pbmc = seurat_pipeline(sobj)
+    # str(pbmc)
 
   #   save(pbmc, file = f)
   # }
-  # str(pbmc)
 
   # pbmc = pbmc3k
 
