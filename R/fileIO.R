@@ -21,7 +21,7 @@ Write10X_h5 <- function(data, filename, use.names = TRUE) {
   if (!requireNamespace('hdf5r', quietly = TRUE)) {
     stop("Please install hdf5r to read HDF5 files")
   }
-  message("filename ", filename)
+  # message("filename ", filename)
   outfile <- hdf5r::H5File$new(filename = filename, mode = 'w')
   # create groupfeature_slot
   genome <- outfile$create_group("rna")
@@ -52,7 +52,7 @@ Write10X_h5 <- function(data, filename, use.names = TRUE) {
 #' modified from Seurat's version to allow for very large sparse matrix,
 #' which are represented as FastDe large sparse matrix (fastde::dgCMatrix64)
 #'
-#' @rdname Read10X_h5
+#' @rdname Read10X_h5_big
 #' @param filename Path to h5 file
 #' @param use.names Label row names with feature names rather than ID numbers.
 #' @param unique.features Make feature names unique (default TRUE)
@@ -64,11 +64,11 @@ Write10X_h5 <- function(data, filename, use.names = TRUE) {
 #' If multiple  genomes are present, returns a list of sparse matrices (one per genome).
 #' If large matrix (more than 2 billion non-zeros), fastde::dgCMatrix64 is returned.
 #'
-#' @name Read10X_h5
+#' @name Read10X_h5_big
 #' @export
 #' @concept preprocessing
 #'
-Read10X_h5 <- function(filename, use.names = TRUE, unique.features = TRUE) {
+Read10X_h5_big <- function(filename, use.names = TRUE, unique.features = TRUE) {
   if (!requireNamespace('hdf5r', quietly = TRUE)) {
     stop("Please install hdf5r to read HDF5 files")
   }
