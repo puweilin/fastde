@@ -11,4 +11,6 @@ inst/fastde-cpp/ext
 inst/fastde-cpp/src
 inst/fastde-cpp/tests
 .vscode
+tests/data/*.Rdata
+tests/data/*.h5
 
