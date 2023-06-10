@@ -9,4 +9,3 @@ inst/fastde-cpp/ext
 inst/fastde-cpp/src
 inst/fastde-cpp/tests
 .vscode
-tests/testtat/*.h5
