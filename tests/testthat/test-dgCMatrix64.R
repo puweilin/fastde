@@ -4,7 +4,7 @@
 test_that("create", {
   sobj <- load_pbmc3k()
 
-  spmat <- sobj@assays$RNA@counts
+  spmat <- sobj@assays[[sobj@active.assay]]@counts
 
   x <- spmat@x
   i <- spmat@i
@@ -31,7 +31,7 @@ test_that("create", {
 test_that("as.dgCMatrix64", {
   sobj <- load_pbmc3k()
 
-  spmat <- sobj@assays$RNA@counts
+  spmat <- sobj@assays[[sobj@active.assay]]@counts
 
   x <- spmat@x
   i <- spmat@i

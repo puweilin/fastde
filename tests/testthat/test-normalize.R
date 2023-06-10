@@ -94,10 +94,10 @@ test_that("normalize_rc_seurat", {
 
 
   out <- Seurat::NormalizeData(sobj, normalization.method = "LogNormalize", scale.factor=1e4, margin=1, verbose=FALSE)  # margin==1 means across features, i.e. colsum.
-  seurat_norm <- out@assays$RNA@data
+  seurat_norm <- out@assays[[out@active.assay]]@data
 
   sobj2 <- load_pbmc3k() 
-  spmat <- sobj2@assays$RNA@counts
+  spmat <- sobj2@assays[[sobj2@active.assay]]@counts
 
   fastde_norm <- fastde::sp_normalize(spmat, normalization.method = "LogNormalize", scale.factor=1e4, margin=1, threads=1L)  # margin==1 means across features, i.e. colsum.
   expect_equal(fastde_norm@x, seurat_norm@x)  # may have small diff due to conversion

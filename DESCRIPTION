@@ -1,11 +1,12 @@
 Package: fastde
 Type: Package
 Title: Fast Differential Gene Expression
-Version: 0.5
+Version: 1.0.0
 Date: 2023-05-09
-Author: Tony Pan
-Maintainer: Tony Pan <tcpan@emory.edu>
-Description: Fast parallel differential gene expression analysis tool, replacement for Seurat's FindAllMarkers and FoldChange functions.
+Authors@R: person(given = "Tony", family="Pan",
+    email = "tcpan@emory.edu",
+    role = c("cre", "aut"))
+Description: Fast parallel differential gene expression analysis tool. This package provides fast alternative functions for Seurat's FindAllMarkers and FoldChange functions.
 License: Apache License (== 2.0) | file LICENSE
 Imports: 
         Seurat,
@@ -20,7 +21,11 @@ Encoding: UTF-8
 SystemRequirements:
 Suggests: 
     testthat (>= 3.0.0),
+    TENxPBMCData,
     knitr,
     rmarkdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+biocViews: Software, SingleCell
+URL: https://github.com/tcpan/fastde
+BugReports: https://github.com/tcpan/fastde/issues

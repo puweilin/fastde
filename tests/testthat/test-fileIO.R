@@ -4,7 +4,7 @@
 test_that("roundtrip", {
   sobj <- load_pbmc3k()
 
-  spmat <- sobj@assays$RNA@counts
+  spmat <- sobj@assays[[sobj@active.assay]]@counts
 
   fastde::Write10X_h5(spmat, "pbmc3k_spmat.h5")
 
@@ -20,7 +20,7 @@ test_that("roundtrip", {
 test_that("roundtrip32_64", {
   sobj <- load_pbmc3k()
 
-  spmat <- sobj@assays$RNA@counts
+  spmat <- sobj@assays[[sobj@active.assay]]@counts
 
   fastde::Write10X_h5(spmat, "pbmc3k_spmat.h5")
 
@@ -37,7 +37,7 @@ test_that("roundtrip32_64", {
 test_that("roundtrip64", {
   sobj <- load_pbmc3k()
 
-  spmat <- sobj@assays$RNA@counts
+  spmat <- sobj@assays[[sobj@active.assay]]@counts
   spmat64 <- as.dgCMatrix64(spmat)
 
   fastde::Write10X_h5(spmat64, "pbmc3k_spmat64.h5")

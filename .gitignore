@@ -47,6 +47,5 @@ src/*.rds
 
 .vscode
 
-tests/data/*.Rdata
-tests/data/*.h5
+tests/testthat/*.h5
 inst/doc

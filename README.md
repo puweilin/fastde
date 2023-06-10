@@ -9,8 +9,19 @@ Currently, Seurat supports 9 algorithms.   FastDE supports student's t-test and 
 
 ## Installation
 
+### From Bioconductor
+
+``` 
+BiocManager::install("fastde")
+
+```
+
 ### From source.
-TO BE COMPLETED.
+
+```
+devtools::install_github("tcpan\fastde.git")
+```
+
 
 	BiocManager::install(c("argparser", "SCnorm", "sva", "limma", "SingleCellExperiment", "edgeR"), lib=.libPaths()[1])
 	

@@ -3,14 +3,10 @@
 .gitmodules
 WIP
 .Rhistory
-tests/demo
-tests/WIP
 src/*.o
 inst/fastde-cpp/benchmarks
 inst/fastde-cpp/ext
 inst/fastde-cpp/src
 inst/fastde-cpp/tests
 .vscode
-tests/data/*.Rdata
-tests/data/*.h5
-
+tests/testtat/*.h5
