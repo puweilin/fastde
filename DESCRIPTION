@@ -6,7 +6,7 @@ Date: 2023-05-09
 Authors@R: person(given = "Tony", family="Pan",
     email = "tcpan@emory.edu",
     role = c("cre", "aut"))
-Description: This package provides fast c/c++ based implementations of the Wilcoxon Mann Whitney test and the Student's t-test, as well as fast FoldChange, log normalization, and large sparse matrix support. Seurat-compatible FastFindMarkers, FoldChange, and FastFindAllMarkers functions are also provided.
+Description:  This package has been developed to accelerate differential gene expression analysis for single cell transciptomic data in R.  This package provides high performance Wilcoxon Mann Whitney rank-sum test and the Student's t-test for data formulated as sparse matrices or as dense matrices containing mostly zeros.  While FastDE has been developed for single cell transcriptomic data analysis, it is applicable to other domains where differential analysis between populations is needed.  FastDE is implemented with data sparsity-aware algorithms and in C++, and provides a S4 class to support large sparse matrices with more than 2 billion non-zero elements to circumvent the current R limit for 'dgCMatrix'.  FastDE additionally provides 'Seurat' compatible FastFindMarkers(), FastFindAllMarkers(), FastFoldChange(), and NormalizeData() functions for convenience.
 License: Apache License (== 2.0) | file LICENSE
 Imports: 
         Seurat,

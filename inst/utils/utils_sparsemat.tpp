@@ -41,7 +41,7 @@ extern cpp11::writable::list _sp_transpose_par(
     // Dimnames:  2D, names.
     // factors:  ignore.
     
-    using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
+    // using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
 
   std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<double>> start;
 
@@ -52,7 +52,7 @@ extern cpp11::writable::list _sp_transpose_par(
     // either:  per thread summary,   this would still use less memory than sortiing the whole thing.
     // bin by row in random (thread) order, then sort per row -  this would be n log n - n log t
     
-    PT2 nelem = x.size();
+    size_t nelem = x.size();
 
     // empty output 
     cpp11::writable::r_vector<XT> tx(nelem); 
@@ -203,7 +203,7 @@ extern cpp11::writable::list _sp_transpose_par(
     // need to search for cid based on offset.
     auto pptr = std::upper_bound(p.begin(), p.end(), offset);
     IT2 cid = std::distance(p.begin(), pptr) - 1;
-    PT2 pos;
+    size_t pos;
     
     for (; offset < end; ++offset) {
         rid = i[offset];   // current row id (starts with 0)
@@ -257,7 +257,7 @@ extern cpp11::writable::list _sp_transpose(
     // Dim:  int, 2D, sizes of full matrix
     // Dimnames:  2D, names.
     // factors:  ignore.
-    using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
+    // using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
 
     // input
     
@@ -293,8 +293,8 @@ extern cpp11::writable::list _sp_transpose(
     auto pptr = p.begin() + 1;  // compare to end of col ptr
     cid = 0;
     XT val;
-    PT2 nelem = x.size();
-    PT2 pos;
+    size_t nelem = x.size();
+    size_t pos;
     decltype(nelem) e = 0;
     
     for (e = 0; e < nelem; ++e) {
@@ -302,7 +302,7 @@ extern cpp11::writable::list _sp_transpose(
         val = x[e];   // current value
         // if the current element pos reaches first elem of next column (*pptr),
         // then go to next column (increment cid and pptr).
-        for (; e >= static_cast<PT2>(*pptr); ++cid, ++pptr);  // current column id
+        for (; e >= static_cast<size_t>(*pptr); ++cid, ++pptr);  // current column id
 
         // now copy and update.
         // curr pos is the offset for the transposed row (new col), in tp.
@@ -400,7 +400,7 @@ extern void _sp_transpose_par(
 
   start = std::chrono::steady_clock::now();
 
-    PT2 nelem = x.size();
+    size_t nelem = x.size();
 
     // assume all allocated properly
 
@@ -546,7 +546,7 @@ extern void _sp_transpose_par(
     // need to search for cid based on offset.
     auto pptr = std::upper_bound(p.begin(), p.end(), offset);
     IT2 cid = std::distance(p.begin(), pptr) - 1;
-    PT2 pos;
+    size_t pos;
     
     for (; offset < end; ++offset) {
         rid = i[offset];   // current row id (starts with 0)
@@ -661,8 +661,8 @@ extern void _sp_transpose(
     auto pptr = p.begin() + 1;  // compare to end of col ptr
     cid = 0;
     XT val;
-    PT2 nelem = x.size();
-    PT2 pos;
+    size_t nelem = x.size();
+    size_t pos;
     decltype(nelem) e = 0;
     
     for (e = 0; e < nelem; ++e) {
@@ -670,7 +670,7 @@ extern void _sp_transpose(
         val = x[e];   // current value
         // if the current element pos reaches first elem of next column (*pptr),
         // then go to next column (increment cid and pptr).
-        for (; e >= static_cast<PT2>(*pptr); ++cid, ++pptr);  // current column id
+        for (; e >= static_cast<size_t>(*pptr); ++cid, ++pptr);  // current column id
 
         // now copy and update.
         // curr pos is the offset for the transposed row (new col), in tp.
@@ -723,8 +723,8 @@ extern OUT _sp_to_dense(
 
     if (threads == 1) {
         IT2 r;
-        PT2 istart, iend;
-        for (IT2 c = 0; c < ncol; ++c) {
+        size_t istart, iend;
+        for (size_t c = 0; c < static_cast<size_t>(ncol); ++c) {
             istart = p[c];
             iend = p[c+1];
 
@@ -746,7 +746,7 @@ extern OUT _sp_to_dense(
         size_t end = nid * block + (nid > rem ? rem : nid);
 
         IT2 r;
-        PT2 istart, iend;
+        size_t istart, iend;
         for (; offset < end; ++offset) {
             istart = p[offset];
             iend = p[offset+1];
@@ -804,8 +804,8 @@ extern OUT _sp_to_dense_transposed(
     if (threads == 1) {
     // now iterate and fill   
         IT r;
-        PT2 istart, iend;
-        for (IT2 c = 0; c < ncol; ++c) {  // iterate by source.
+        size_t istart, iend;
+        for (size_t c = 0; c < static_cast<size_t>(ncol); ++c) {  // iterate by source.
             istart = p[c];
             iend = p[c+1];
 
@@ -825,7 +825,7 @@ extern OUT _sp_to_dense_transposed(
         size_t end = nid * block + (nid > rem ? rem : nid);
 
         IT2 r;
-        PT2 istart, iend;
+        size_t istart, iend;
         for (; offset < end; ++offset) {
             istart = p[offset];
             iend = p[offset+1];
@@ -918,9 +918,9 @@ extern cpp11::writable::list _sp_rbind(
         cpp11::r_vector<PT> ip = to_cpp(pvecs.at(j), PT());
 
         for (IT i = 0; i < ncol; ++i) {
-            PT2 in_start = ip[i];
-            PT2 in_end = ip[i+1];
-            PT2 out_start = p_offsets[i];
+            size_t in_start = ip[i];
+            size_t in_end = ip[i+1];
+            size_t out_start = p_offsets[i];
 
             // iterate over none zeros.
             for (; in_start < in_end; ++in_start, ++out_start) {
@@ -985,7 +985,7 @@ extern cpp11::writable::list _sp_cbind(
     std::vector<IT> c_offsets(n_vecs+1);
     p_offsets[0] = 0;
     c_offsets[0] = 0;
-    IT nc = 0;
+    size_t nc = 0;
     for (int i = 0; i < n_vecs; ++i) {
         cpp11::r_vector<PT> ip = to_cpp(pvecs.at(i), PT());;
         nc = ncols[i];
@@ -1005,7 +1005,8 @@ extern cpp11::writable::list _sp_cbind(
 
     // copy data over to the aggregated output
     // omp causes stack imbalance.   
-    PT2 nz = 0, poff; //, out_x = 0, out_p = 0;
+    size_t nz = 0;
+    PT2 poff; //, out_x = 0, out_p = 0;
     IT coff = 0;
     for (int j = 0; j < n_vecs; ++j) {
 
@@ -1019,7 +1020,7 @@ extern cpp11::writable::list _sp_cbind(
         nz = ip[nc];
         poff = p_offsets[j];
         
-        for (PT2 i = 0; i < nz; ++i, ++poff) {
+        for (size_t i = 0; i < nz; ++i, ++poff) {
             xv[poff] = ix[i];
             iv[poff] = ii[i];
             // ++out_x;
@@ -1029,7 +1030,7 @@ extern cpp11::writable::list _sp_cbind(
         coff = c_offsets[j];
         // copy the p vector
 
-        for (IT i = 0; i < nc; ++i) {
+        for (size_t i = 0; i < nc; ++i) {
             pv[coff + i] = ip[i] + poff;
         }
     }
@@ -1054,7 +1055,7 @@ extern cpp11::writable::r_vector<XT> _sp_colsums(
     IT const & ncol, 
     int const & threads) {
 
-    using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
+    // using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
 
     cpp11::writable::r_vector<XT> out(ncol);
     
@@ -1067,7 +1068,7 @@ extern cpp11::writable::r_vector<XT> _sp_colsums(
     int nid = tid + 1;
     size_t end = nid * block + (nid > rem ? rem : nid);
 
-    PT2 start = p[offset], end2;
+    size_t start = p[offset], end2;
     for (; offset < end; ++offset) {
         end2 = p[offset+1];
         XT sum = 0;
@@ -1095,7 +1096,7 @@ extern cpp11::writable::r_vector<XT> _sp_rowsums(
     if (threads == 1) {
 
         IT r;
-        for (IT2 offset = 0; offset < nzcount; ++offset) {
+        for (size_t offset = 0; offset < nzcount; ++offset) {
             r = i[offset];
             out[r] += x[offset];
         }
