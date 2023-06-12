@@ -1,5 +1,7 @@
 #pragma once 
 
+#include <stddef.h>
+
 #include "cpp11/r_vector.hpp"
 #include "cpp11/list.hpp"
 #include "cpp11/list_of.hpp"

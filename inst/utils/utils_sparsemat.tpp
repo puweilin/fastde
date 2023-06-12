@@ -710,7 +710,7 @@ extern OUT _sp_to_dense(
     // Dimnames:  2D, names.
     // factors:  ignore.
     
-    using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
+    // using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
 
     // ======= create new output and initialize
     OUT out(nrow, ncol);
@@ -780,7 +780,7 @@ extern OUT _sp_to_dense_transposed(
     // Dim:  int, 2D, sizes of full matrix
     // Dimnames:  2D, names.
     // factors:  ignore.
-    using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
+    // using PT2 = typename std::conditional<std::is_same<PT, double>::value, long, int>::type;
 
 
     // https://www.r-bloggers.com/2020/03/what-is-a-dgcmatrix-object-made-of-sparse-matrix-format-in-r/

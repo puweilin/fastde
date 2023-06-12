@@ -12,6 +12,8 @@
 #include "cpp11/data_frame.hpp"
 #include "cpp11/strings.hpp"
 
+#include <stddef.h>
+
 #include <vector>
 
 
