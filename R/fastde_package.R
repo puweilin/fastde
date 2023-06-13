@@ -9,6 +9,7 @@
 #' @import Matrix 
 #' @import methods
 #' @import future
+#' @import hdf5r
 #' @useDynLib fastde, .registration = TRUE
 #' @name fastde
 NULL  

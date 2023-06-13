@@ -48,4 +48,3 @@ src/*.rds
 .vscode
 
 tests/testthat/*.h5
-inst/doc

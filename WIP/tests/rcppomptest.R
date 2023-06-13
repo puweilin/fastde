@@ -1,4 +1,4 @@
-# from https://r-forge.r-project.org/scm/viewvc.php/pkg/Rcpp/inst/examples/OpenMP/OpenMPandInline.r?view=markup&root=rcpp
+# from https://r-forge.r-project.org/scm/viewvc.php/pkg/Rcpp/src/examples/OpenMP/OpenMPandInline.r?view=markup&root=rcpp
 
 library(inline)
 library(rbenchmark)

@@ -1,25 +1,29 @@
 Package: fastde
 Type: Package
 Title: Fast Differential Gene Expression Analysis
-Version: 0.99.0
+Version: 0.5.0
 Date: 2023-06-09
-Authors@R: person(given = "Tony", family="Pan",
-    email = "tcpan@emory.edu",
-    role = c("cre", "aut"))
+Authors@R: c(person(given = "Tony", family="Pan",
+        email = "tcpan@emory.edu",
+        role = c("cre", "aut")),
+    person(given = "Georgia Institute of Technology",
+        role = c("cph", "fnd")))
 Description:  Provides accelerated differential gene expression analysis for single cell transcriptomic data in R.  This package provides high performance Wilcoxon Mann Whitney rank-sum test and the Student's t-test for data formulated as sparse matrices or as dense matrices containing mostly zeros.  While FastDE has been developed for single cell transcriptomic data analysis, it is applicable to other domains where differential analysis between populations is needed.  FastDE is implemented with data sparsity-aware algorithms and in C++, and provides a S4 class to support large sparse matrices with more than 2 billion non-zero elements to circumvent the current R limit for 'dgCMatrix'.  FastDE additionally provides 'Seurat' compatible FastFindMarkers(), FastFindAllMarkers(), FastFoldChange(), and NormalizeData() functions for convenience.
 URL: https://github.com/tcpan/fastde
 BugReports: https://github.com/tcpan/fastde/issues
 License: Apache License (== 2.0) | file LICENSE
 biocViews:
 Depends:
-    R (>= 4.0.0)
-Imports: 
-    Seurat,
-    tictoc,
+    R (>= 4.0.0),
     Matrix,
+    Seurat
+Imports: 
+    tictoc,
     methods,
     hdf5r,
-    future
+    future,
+    stats,
+    utils
 LinkingTo: cpp11 (>= 0.4.3)
 RoxygenNote: 7.2.3
 Encoding: UTF-8
@@ -28,8 +32,8 @@ Suggests:
     testthat (>= 3.0.0),
     SingleCellExperiment,
     SummarizedExperiment,
-    MatrixGenerics,
     matrixStats,
+    MatrixGenerics,
     GenomicRanges,
     stats4,
     BiocGenerics,
@@ -41,8 +45,12 @@ Suggests:
     DelayedArray,
     S4Arrays,
     rhdf5,
-    TENxPBMCData,
     knitr,
-    rmarkdown
+    dplyr,
+    patchwork,
+    rmarkdown,
+    SeuratData
+Remotes: satijalab/seurat-data
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+NeedsCompilation: yes

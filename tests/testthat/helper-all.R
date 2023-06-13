@@ -38,24 +38,24 @@ gen_labels <- function(nclusters, nsamples) {
 load_pbmc3k <- function() {
     # tried 1.) packaging up the pbmc3k data - files too big.
     #       2.) SeuratData - missing Matrix package during check()
-    #       3.) TENxPBMCData - need to convert to seurat obj - this is the best choice.
+    #       3.) TENxPBMCData - need to convert to seurat obj.  This is not available with r-devel...
 
-    # using Bioconductor TENxPBMCData as input
-    pbmc3k.sce=TENxPBMCData('pbmc3k')
-    # must convert from delayed matrix to sparse matrix.
-    counts(pbmc3k.sce, withDimnames=FALSE) <- as(counts(pbmc3k.sce, withDimnames = FALSE), "dgCMatrix")
-    # now convert to seurat object.  since there is no logcount, data=NULL
-    pbmc <- as.Seurat(pbmc3k.sce, counts = 'counts', data = NULL)
-    # slots are not consistently named. -  use active.assay
+    # # using Bioconductor TENxPBMCData as input
+    # pbmc3k.sce=TENxPBMCData('pbmc3k')
+    # # must convert from delayed matrix to sparse matrix.
+    # counts(pbmc3k.sce, withDimnames=FALSE) <- as(counts(pbmc3k.sce, withDimnames = FALSE), "dgCMatrix")
+    # # now convert to seurat object.  since there is no logcount, data=NULL
+    # pbmc <- as.Seurat(pbmc3k.sce, counts = 'counts', data = NULL)
+    # # slots are not consistently named. -  use active.assay
 
-    # # not part of CRAN and there is version mismatch.
-    # installed <- intersect(x = paste0("pbmc3k", ".", "SeuratData"), y = rownames(x = SeuratData::InstalledData()))
-    # if (length(x = installed) == 0) {
-    #     SeuratData::InstallData("pbmc3k")
-    # }
-    # data("pbmc3k")
+    # not part of CRAN and there is version mismatch.
+    installed <- intersect(x = paste0("pbmc3k", ".", "SeuratData"), y = rownames(x = SeuratData::InstalledData()))
+    if (length(x = installed) == 0) {
+        SeuratData::InstallData("pbmc3k")
+    }
+    data("pbmc3k")
     # # str(pbmc3k)
-    # return(pbmc3k)
+    return(pbmc3k)
 
     # alternative - data in packge.
     # datadir = get_data_dir()
@@ -65,7 +65,7 @@ load_pbmc3k <- function() {
     # # Initialize the Seurat object with the raw (non-normalized data).
     # pbmc <- Seurat::CreateSeuratObject(counts = spmat, project = dataset, min.cells = 3, min.features = 200)
 
-    return(pbmc)
+    # return(pbmc)
 }
 
 #' @import Seurat

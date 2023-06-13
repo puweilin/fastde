@@ -4,8 +4,8 @@
 WIP
 .Rhistory
 src/*.o
-inst/fastde-cpp/benchmarks
-inst/fastde-cpp/ext
-inst/fastde-cpp/src
-inst/fastde-cpp/tests
+src/fastde-cpp/benchmarks
+src/fastde-cpp/ext
+src/fastde-cpp/src
+src/fastde-cpp/tests
 .vscode
