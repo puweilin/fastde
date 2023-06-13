@@ -30,27 +30,10 @@ Encoding: UTF-8
 SystemRequirements:
 Suggests: 
     testthat (>= 3.0.0),
-    SingleCellExperiment,
-    SummarizedExperiment,
-    matrixStats,
-    MatrixGenerics,
-    GenomicRanges,
-    stats4,
-    BiocGenerics,
-    S4Vectors,
-    IRanges,
-    GenomeInfoDb,
-    Biobase,
-    HDF5Array,
-    DelayedArray,
-    S4Arrays,
-    rhdf5,
     knitr,
     dplyr,
     patchwork,
-    rmarkdown,
-    SeuratData
-Remotes: satijalab/seurat-data
+    rmarkdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 NeedsCompilation: yes
