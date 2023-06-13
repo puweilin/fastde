@@ -44,6 +44,7 @@ test_that("findallmarkers_ttest", {
     sobj = load_pbmc3k()
 #     # str(sobj)
     pbmc = seurat_pipeline(sobj)
+     
 
 #     save(pbmc, file = f)
 #   }

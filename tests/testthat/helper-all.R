@@ -38,13 +38,14 @@ make_small_pbmc3k <- function(count) {
     # now sample.  tried to used "variable features" and it resulted in most features having counts of 1 or 2.
     # where original data has 258 levels.
     # so instead, just pick the first n features.  exclude NA in the annotations
-    spbmc <- pbmc[1:2000, !is.na(pbmc@meta.data$seurat_annotations)]
+    spbmc <- pbmc3k[1:2000, !is.na(pbmc3k@meta.data$seurat_annotations)]
 
-    # Don't bother setting the existing seurat annotation as labels.  just rerun clustering.
-    # Seurat::Idents(spbmc) <- spbmc@meta.data$seurat_annotations
+    # setting the existing seurat annotation as labels. 
+    Seurat::Idents(spbmc) <- spbmc@meta.data$seurat_annotations
 
     #save to disk for later reload.
-    fastde::Write10X_h5(spbmc@assays$RNA@counts, paste0(get_data_dir(), "/pbmc3k_2k.h5"))
+    save(spbmc, file=paste0(get_data_dir(), "/pbmc3k_2k.rdata"))
+    # fastde::Write10X_h5(spbmc@assays$RNA@counts, paste0(get_data_dir(), "/pbmc3k_2k.h5"))
 }
 
 
@@ -85,11 +86,15 @@ load_pbmc3k <- function() {
     datadir = get_data_dir()
     dataset = "pbmc3k"
     # Load the PBMC dataset
-    spmat <- Seurat::Read10X_h5(paste0(datadir, '/', dataset, '_2k.h5'))
-    # Initialize the Seurat object with the raw (non-normalized data).  50 features because of the subsampling.
-    pbmc <- Seurat::CreateSeuratObject(counts = spmat, project = dataset, min.cells = 3, min.features = 50)
+    load(paste0(get_data_dir(), "/pbmc3k_1500.rdata"))
+    # spmat <- Seurat::Read10X_h5(paste0(datadir, '/', dataset, '_2k.h5'))
+    # # Initialize the Seurat object with the raw (non-normalized data).  50 features because of the subsampling.
+    # spbmc <- Seurat::CreateSeuratObject(counts = spmat, project = dataset, min.cells = 3, min.features = 50)
 
-    return(pbmc)
+    # setting the existing seurat annotation as labels. 
+    Seurat::Idents(spbmc) <- spbmc@meta.data$seurat_annotations
+
+    return(spbmc)
 }
 
 #' @import Seurat
@@ -115,11 +120,17 @@ seurat_pipeline <- function(sobj) {
     # 30 components is fine.
     # pbmc <- Seurat::RunPCA(pbmc, features = VariableFeatures(object = pbmc), verbose = FALSE, npcs=30)
     # continuing - use all genes instead of just variable features.
-    pbmc <- Seurat::RunPCA(pbmc, features = all.genes, verbose = FALSE, npcs=30)
 
-    pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:30, verbose=FALSE)
+    # below seems to be no deterministic and can lead to "No DE genes found" or a single group, or some empty groups.
+    # this may be in FindNeighbors, or in FindClusters.
+    # Use existing seurat ennotations instead.
 
-    pbmc <- Seurat::FindClusters(pbmc, resolution = 0.5, verbose=FALSE)
+    # pbmc <- Seurat::RunPCA(pbmc, features = all.genes, verbose = FALSE, npcs=30)
+    # pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:30, verbose=FALSE)
+    # pbmc <- Seurat::FindClusters(pbmc, resolution = 0.5, verbose=FALSE)
+
+    Seurat::Idents(pbmc) <- "seurat_annotations"
+
 
     # str(pbmc)
 

@@ -6,9 +6,9 @@ test_that("roundtrip", {
 
   spmat <- sobj@assays[[sobj@active.assay]]@counts
 
-  fastde::Write10X_h5(spmat, paste0(get_data_dir(), "/testout/pbmc3k_spmat.h5"))
+  fastde::Write10X_h5(spmat, paste0(get_data_dir(), "/test_pbmc3k_spmat.h5"))
 
-  spmat2 <- Seurat::Read10X_h5(paste0(get_data_dir(), "/testout/pbmc3k_spmat.h5"))
+  spmat2 <- Seurat::Read10X_h5(paste0(get_data_dir(), "/test_pbmc3k_spmat.h5"))
   
   expect_identical(spmat@x, spmat2@x)
   expect_identical(spmat@i, spmat2@i)
@@ -22,9 +22,9 @@ test_that("roundtrip32_64", {
 
   spmat <- sobj@assays[[sobj@active.assay]]@counts
 
-  fastde::Write10X_h5(spmat, paste0(get_data_dir(), "/testout/pbmc3k_spmat.h5"))
+  fastde::Write10X_h5(spmat, paste0(get_data_dir(), "/test_pbmc3k_spmat.h5"))
 
-  spmat2 <- fastde::Read10X_h5_big(paste0(get_data_dir(), "/testout/pbmc3k_spmat.h5"))
+  spmat2 <- fastde::Read10X_h5_big(paste0(get_data_dir(), "/test_pbmc3k_spmat.h5"))
   
   expect_identical(spmat@x, spmat2@x)
   expect_identical(spmat@i, spmat2@i)
@@ -40,9 +40,9 @@ test_that("roundtrip64", {
   spmat <- sobj@assays[[sobj@active.assay]]@counts
   spmat64 <- as.dgCMatrix64(spmat)
 
-  fastde::Write10X_h5(spmat64, paste0(get_data_dir(), "/testout/pbmc3k_spmat64.h5"))
+  fastde::Write10X_h5(spmat64, paste0(get_data_dir(), "/test_pbmc3k_spmat64.h5"))
 
-  spmat2 <- fastde::Read10X_h5_big(paste0(get_data_dir(), "/testout/pbmc3k_spmat64.h5"))
+  spmat2 <- fastde::Read10X_h5_big(paste0(get_data_dir(), "/test_pbmc3k_spmat64.h5"))
   
   expect_identical(spmat@x, spmat2@x)
   expect_identical(spmat@i, spmat2@i)
