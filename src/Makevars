@@ -11,7 +11,7 @@ ADDR_SANITIZER_LDFLAGS = #-lasan -fsanitize=address -fPIC
 PKG_NATIVE_FLAGS = -mtune=native # not portable -march=native
 # -fno-omit-frame-pointers is also not portable.
 
-PKG_CPPFLAGS = -I../src/fastde-cpp/include/ -I../src/utils/
+PKG_CPPFLAGS = -I../src/fastde-cpp/include/ -I../src/utils/ -I/usr/local/include
 # compile flags
 PKG_CXXFLAGS = $(ADDR_SANITIZER_CFLAGS) $(SHLIB_OPENMP_CXXFLAGS)
 # not used?  PKG_CFLAGS = $(ADDR_SANITIZER_CFLAGS) $(SHLIB_OPENMP_CFLAGS)
